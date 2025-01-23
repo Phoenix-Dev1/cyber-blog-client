@@ -48,13 +48,6 @@ const FeaturedPosts = () => {
           >
             {formatCategory(posts[0].category)}
           </Link>
-          <span className="text-gray-400 text-sm">Written by</span>
-          <Link
-            to={`/posts?author=${posts[0].user?.username}`}
-            className="text-royalblue"
-          >
-            {posts[0].user?.username}
-          </Link>
           <span className="text-gray-500">{format(posts[0].createdAt)}</span>
         </div>
         {/* Title */}
