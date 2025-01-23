@@ -17,7 +17,7 @@ const AddPostButton = () => {
         />
       </svg>
       {/* Button Text */}
-      <span className="text-white font-bold text-lg">Create A Post</span>
+      <span className="text-white font-bold text-lg">Create A Post!</span>
     </button>
   );
 };

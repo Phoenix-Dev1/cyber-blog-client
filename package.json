@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.64.0",
+    "@tanstack/react-query": "^5.64.0 ",
     "axios": "^1.7.9",
     "dompurify": "^3.2.3",
     "imagekitio-react": "^4.2.0",

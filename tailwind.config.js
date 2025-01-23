@@ -7,6 +7,7 @@ export default {
         royalblue: "#4169E1",
         lavilavi: "#CCCCFF",
         lightgray: "#F5F5F5",
+        lightgraytwo: "#F5F5F6",
       },
     },
   },
