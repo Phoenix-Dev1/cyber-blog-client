@@ -7,10 +7,8 @@ import { useSearchParams } from "react-router-dom";
 const fetchPosts = async (pageParam, searchParams) => {
   const searchParamsObj = Object.fromEntries([...searchParams]);
 
-  console.log(searchParamsObj);
-
   const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts`, {
-    params: { page: pageParam, limit: 10, ...searchParamsObj },
+    params: { page: pageParam, limit: 30, ...searchParamsObj },
   });
   return res.data;
 };
@@ -47,9 +45,10 @@ const PostList = () => {
       dataLength={allPosts.length}
       next={fetchNextPage}
       hasMore={!!hasNextPage}
+      scrollThreshold={0.8}
       loader={<h4>Loading more posts...</h4>}
       endMessage={
-        <p>
+        <p className="justify-center text-center hidden lg:block">
           <b>Yay! You have seen it all</b>
         </p>
       }

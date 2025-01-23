@@ -12,32 +12,36 @@ const PostListItem = ({ post }) => {
           <Image
             src={post.img}
             width="735"
+            height="400"
             className="rounded-2xl object-cover"
           />
         </div>
       )}
       {/* Details */}
-      <div className="flex flex-col gap-4 w-2/3">
+      <div className="flex flex-col gap-4 w-11/12">
         <Link to={`/${post.slug}`} className="text-4xl font-semibold">
           {post.title}
         </Link>
         <div className="flex items-center gap-2 text-gray-400 text-sm">
           <span>Written by</span>
           <Link
-            to={`/posts?author=${post.user.username}`}
+            to={`/posts?author=${post.user?.username}`}
             className="text-royalblue"
           >
-            {post.user.username}
+            {post.user?.username}
           </Link>
           <span>on</span>
-          <Link to={`/${post.category}`} className="text-royalblue">
+          <Link to={`/posts?cat=${post.category}`} className="text-royalblue">
             {formatCategory(post.category)}
           </Link>
           <span>{format(post.createdAt)}</span>
         </div>
         {/* Description */}
         <p className="">{post.desc}</p>
-        <Link to={`/${post.slug}`} className="underline text-royalblue text-sm">
+        <Link
+          to={`/${post.slug}`}
+          className="underline text-royalblue text-sm w-11/12"
+        >
           Read More
         </Link>
       </div>

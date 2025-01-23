@@ -9,19 +9,14 @@ import LoginPage from "./routes/LoginPage.jsx";
 import RegisterPage from "./routes/RegisterPage.jsx";
 import SinglePostPage from "./routes/SinglePostPage.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
-import { ClerkProvider } from "@clerk/clerk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthProvider } from "./context/AuthContext.jsx"; // Add AuthProvider
+import PrivateRoute from "./routes/PrivateRoute.jsx"; // Add PrivateRoute
+import AboutPage from "./routes/AboutPage.jsx";
 
 const queryClient = new QueryClient();
-
-// Import your Publishable Key
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Publishable Key");
-}
 
 const router = createBrowserRouter([
   {
@@ -30,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Homepage />,
+      },
+      {
+        path: "/about",
+        element: <AboutPage />,
       },
       {
         path: "/posts",
@@ -41,7 +40,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/write",
-        element: <Write />,
+        element: (
+          <PrivateRoute>
+            <Write />
+          </PrivateRoute>
+        ), // Protect this route
       },
       {
         path: "/login",
@@ -57,11 +60,11 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
         <ToastContainer position="bottom-right" />
       </QueryClientProvider>
-    </ClerkProvider>
+    </AuthProvider>
   </StrictMode>
 );

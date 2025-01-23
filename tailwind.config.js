@@ -5,6 +5,8 @@ export default {
     extend: {
       colors: {
         royalblue: "#4169E1",
+        lavilavi: "#CCCCFF",
+        lightgray: "#F5F5F5",
       },
     },
   },

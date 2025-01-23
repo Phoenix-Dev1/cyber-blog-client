@@ -19,6 +19,13 @@ const fetchPost = async (slug) => {
   return res.data;
 };
 
+// Utility to decode HTML entities
+const decodeHtmlEntities = (input) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(input, "text/html");
+  return doc.documentElement.textContent;
+};
+
 const SinglePostPage = () => {
   const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,8 +40,26 @@ const SinglePostPage = () => {
   if (error) return <h4>{error.message}</h4>;
   if (!data) return <h4>"Post Not Found"</h4>;
 
-  // Sanitize the HTML content
-  const sanitizedContent = DOMPurify.sanitize(data.content);
+  // Decode and sanitize the HTML content
+  const decodedContent = decodeHtmlEntities(data.content);
+  const sanitizedContent = DOMPurify.sanitize(decodedContent, {
+    ALLOWED_TAGS: [
+      "p",
+      "br",
+      "strong",
+      "h1",
+      "h2",
+      "h3",
+      "ul",
+      "ol",
+      "li",
+      "em",
+      "u",
+      "b",
+      "i",
+    ],
+    ALLOWED_ATTR: ["class", "id", "style"],
+  });
 
   // Filter by category change
   const handleCategoryChange = (category) => {
@@ -45,8 +70,6 @@ const SinglePostPage = () => {
   const categoryClick = (category) => {
     navigate(`/posts?cat=${category}`);
   };
-
-  // console.log(data);
 
   return (
     <div className="flex flex-col gap-8">
@@ -59,7 +82,7 @@ const SinglePostPage = () => {
           <div className=" flex items-center gap-2 text-gray-400 text-sm">
             <span>Written by</span>
             <Link className="text-royalblue " to="/test">
-              {data.user.username}
+              {data.user?.username}
             </Link>
             <span>on </span>
             <span
@@ -74,7 +97,12 @@ const SinglePostPage = () => {
         </div>
         {data.img && (
           <div className="hidden lg:block w-2/5">
-            <Image src={data.img} width="600" className="rounded-2xl" />
+            <Image
+              src={data?.img}
+              width="400"
+              height="600"
+              className="rounded-2xl"
+            />
           </div>
         )}
       </div>
@@ -88,27 +116,28 @@ const SinglePostPage = () => {
         <div className="px-4 h-max sticky top-8">
           <h1 className="mb-4 text-sm font-medium">Author</h1>
           <div className="flex  flex-col gap-4">
-            <div className="flex items-center gap-8">
-              {data.img && (
-                <Image
-                  src={data.img}
-                  className="w-12 h-12 rounded-full object-cover"
-                  width="48"
-                  height="48"
-                />
-              )}
-              <Link to="" className="text-royalblue">
-                {data.user.username}
+            <div className="flex items-center gap-4">
+              <Image
+                src={data?.user?.img || "default-avatar.png"}
+                className="w-12 h-12 rounded-full object-cover"
+                width="48"
+                height="48"
+              />
+              <Link
+                to={`/posts?author=${data?.user?.username}`}
+                className="text-royalblue"
+              >
+                {data?.user?.username}
               </Link>
             </div>
-            <p className="text-sm text-gray-500">Lorem ipsum dolor sit, amet</p>
+            <p className="text-sm text-gray-500">Cybersecurity enthusiast</p>
             <div className="flex gap-2">
-              <Link>
+              <a href="https://www.facebook.com" target="_blank">
                 <Image src="facebook.svg" />
-              </Link>
-              <Link>
+              </a>
+              <a href="https://www.instagram.com" target="_blank">
                 <Image src="instagram.svg" />
-              </Link>
+              </a>
             </div>
           </div>
           <PostMenuActions post={data} />

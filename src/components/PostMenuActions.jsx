@@ -1,39 +1,48 @@
-import { useAuth, useUser } from "@clerk/clerk-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext"; // Use custom AuthContext
 
 const PostMenuActions = ({ post }) => {
-  const { user } = useUser();
-  const { getToken } = useAuth();
+  const { user } = useAuth(); // Access user from AuthContext
   const navigate = useNavigate();
 
+  const queryClient = useQueryClient();
+
+  const shouldFetchSavedPosts = !!user;
+
+  // Fetch saved posts
   const {
-    isPending,
+    isLoading,
     error,
     data: savedPosts,
   } = useQuery({
     queryKey: ["savedPosts"],
     queryFn: async () => {
-      const token = await getToken();
-      return axios.get(`${import.meta.env.VITE_API_URL}/users/saved`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const token = localStorage.getItem("authToken");
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/users/saved`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res.data;
     },
+    enabled: shouldFetchSavedPosts, // Only fetch if user exists
   });
 
-  const isAdmin = user?.publicMetadata?.role === "admin" || false;
+  const isAdmin = user?.role === "admin";
 
-  // Cheking if the user is authenticated, if not the value is false
-  const isSaved = savedPosts?.data?.some((p) => p === post._id) || false;
+  // Check if the post is saved
+  const isSaved = savedPosts?.some((p) => p === post._id) || false;
 
-  // Delete a post mutation
+  // Delete post mutation
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      const token = await getToken();
+      const token = localStorage.getItem("authToken");
       return axios.delete(`${import.meta.env.VITE_API_URL}/posts/${post._id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -45,21 +54,17 @@ const PostMenuActions = ({ post }) => {
       navigate("/");
     },
     onError: (error) => {
-      toast.error(error.response.data);
+      toast.error(error.response?.data || "Failed to delete post");
     },
   });
 
-  const queryClient = useQueryClient();
-
-  // Save a post mutation
+  // Save post mutation
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const token = await getToken();
+      const token = localStorage.getItem("authToken");
       return axios.patch(
         `${import.meta.env.VITE_API_URL}/users/save`,
-        {
-          postId: post._id,
-        },
+        { postId: post._id },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -71,19 +76,21 @@ const PostMenuActions = ({ post }) => {
       queryClient.invalidateQueries({ queryKey: ["savedPosts"] });
     },
     onError: (error) => {
-      toast.error(error.response.data);
+      toast.error(error.response?.data || "Failed to save post");
     },
   });
 
-  // Feature a post mutation
+  // Feature post mutation
   const featureMutation = useMutation({
     mutationFn: async () => {
-      const token = await getToken();
+      const token = localStorage.getItem("authToken");
+
+      if (!user) {
+        return <p>Please log in to access actions.</p>;
+      }
       return axios.patch(
         `${import.meta.env.VITE_API_URL}/posts/feature`,
-        {
-          postId: post._id,
-        },
+        { postId: post._id },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -95,24 +102,23 @@ const PostMenuActions = ({ post }) => {
       queryClient.invalidateQueries({ queryKey: ["post", post.slug] });
     },
     onError: (error) => {
-      toast.error(error.response.data);
+      toast.error(error.response?.data || "Failed to feature post");
     },
   });
 
-  // Handles deletion of a post from collection
+  // Handlers
   const handleDelete = () => {
     deleteMutation.mutate();
   };
 
-  // Handels save of a single post inside user collection
   const handleSave = () => {
     if (!user) {
-      return navigate("/login");
+      navigate("/login");
+    } else {
+      saveMutation.mutate();
     }
-    saveMutation.mutate();
   };
 
-  // Handles feature of a post
   const handleFeature = () => {
     featureMutation.mutate();
   };
@@ -120,7 +126,7 @@ const PostMenuActions = ({ post }) => {
   return (
     <div className="mt-8 mb-4 text-sm font-medium">
       <h1 className="">Actions</h1>
-      {isPending ? (
+      {isLoading ? (
         "Loading..."
       ) : error ? (
         "Saved posts fetching failed"
@@ -182,7 +188,7 @@ const PostMenuActions = ({ post }) => {
               }
             />
           </svg>
-          <span>Featured</span>
+          <span>Feature this post</span>
           {featureMutation.isPending && (
             <span className="text-xs">(in progress)</span>
           )}

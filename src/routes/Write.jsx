@@ -1,6 +1,4 @@
-import { useUser, useAuth } from "@clerk/clerk-react";
-import LoginPage from "./LoginPage.jsx";
-import ReactQuill, { Quill } from "react-quill-new";
+import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -9,32 +7,26 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Upload from "../components/Upload.jsx";
 import Image from "../components/Image.jsx";
+import { useAuth } from "../context/AuthContext";
 
 const Write = () => {
-  //Validating user signIn
-  const { isLoaded, isSignedIn } = useUser();
+  const { user } = useAuth(); // Access user from AuthContext
 
-  // Getting the ReactQuill form content
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(""); // ReactQuill content
+  const [cover, setCover] = useState(null); // Cover image for DB
+  const [img, setImg] = useState(""); // Image to upload
+  const [video, setVideo] = useState(""); // Video to upload
+  const [progress, setProgress] = useState(0); // Upload progress
+  const [uploading, setUploading] = useState(false); // Uploading state
 
-  // IMG URL state for DB
-  const [cover, setCover] = useState(null);
+  const navigate = useNavigate();
 
-  // Image to upload
-  const [img, setImg] = useState("");
-
-  // Video to upload
-  const [video, setVideo] = useState("");
-
-  // IMG upload progress precentage
-  const [progress, setProgress] = useState(0);
-
-  // UseEffect for adding img to the Quill text area
+  // Add image to ReactQuill content
   useEffect(() => {
     img && setValue((prev) => prev + `<p><image src="${img.url}"/></p>`);
   }, [img]);
 
-  // UseEffect for adding video to the Quill text area
+  // Add video to ReactQuill content
   useEffect(() => {
     video &&
       setValue(
@@ -42,41 +34,29 @@ const Write = () => {
       );
   }, [video]);
 
-  // Navigate to the newely created post after success
-  const navigate = useNavigate();
+  // Redirect unauthenticated users to login
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
-  // Getting user token for auth to post a new post
-  const { getToken } = useAuth();
-
-  // Post creation mutation
   const mutation = useMutation({
     mutationFn: async (newPost) => {
-      const token = await getToken();
+      const token = localStorage.getItem("authToken"); // Get token from localStorage
       return axios.post(`${import.meta.env.VITE_API_URL}/posts`, newPost, {
         headers: { Authorization: `Bearer ${token}` },
       });
     },
-    // On success
     onSuccess: (res) => {
       toast.success("Post Published");
       navigate(`/${res.data.slug}`);
     },
+    onError: (error) => {
+      toast.error(error.response?.data || "Failed to publish post");
+    },
   });
 
-  // Add loading animation later
-  if (!isLoaded) {
-    return <div className="">Loading...</div>;
-  }
-
-  if (isLoaded && !isSignedIn) {
-    return (
-      <div className="flex items-center justify-center h-[calc(100vh-20px)]">
-        <LoginPage />
-      </div>
-    );
-  }
-
-  //Handle form submit
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -89,28 +69,41 @@ const Write = () => {
       content: value,
     };
 
-    //console.log(data.img.filepath);
-
-    // Adding the new post to the DB
     mutation.mutate(data);
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] flex flex-col gap-6 ">
+    <div className="h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] flex flex-col gap-6">
       <h1 className="text-xl font-light">Create a New Post</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 flex-1 mb-6">
         <div className="flex flex-row gap-4 items-center">
           {/* Cover image upload */}
-          <Upload type="image" setProgress={setProgress} setData={setCover}>
+          <Upload
+            type="image"
+            setProgress={(progress) => {
+              setProgress(progress);
+              setUploading(progress > 0 && progress < 100);
+            }}
+            setData={setCover}
+          >
             <button
               type="button"
-              className=" w-max p-2 shadow-md rounded-xl text-sm text-gray-500 bg-white"
+              className="w-max p-2 shadow-md rounded-xl text-sm text-gray-500 bg-white"
             >
               Add a cover image
             </button>
           </Upload>
-          {/* Display uploaded cover image */}
-          {cover && (cover?.filePath || cover.url) && (
+          {/* Display uploaded cover image or progress */}
+          {uploading ? (
+            <div className="relative w-12 h-12">
+              <div className="absolute inset-0 bg-blue-200 rounded-full">
+                <div
+                  className="absolute inset-0 bg-blue-500 rounded-full"
+                  style={{ height: `${progress}%` }}
+                ></div>
+              </div>
+            </div>
+          ) : cover && (cover?.filePath || cover.url) ? (
             <Image
               src={cover?.filePath || "/placeholderimg.jpg"}
               alt="Cover Thumbnail"
@@ -118,7 +111,7 @@ const Write = () => {
               width={48}
               height={48}
             />
-          )}
+          ) : null}
         </div>
         <input
           className="text-4xl font-semibold bg-transparent outline-none"
@@ -127,7 +120,7 @@ const Write = () => {
           name="title"
         />
         <div className="flex items-center gap-4">
-          <label htmlFor="cat" className="text-sm ">
+          <label htmlFor="cat" className="text-sm">
             Choose a category:
           </label>
           <select
@@ -173,8 +166,6 @@ const Write = () => {
             {mutation.isPending ? "Loading" : "Send"}
           </button>
         </div>
-        {"Progress: " + progress}
-        {/* {mutation.isError && <span>{mutation.error.message}</span>} */}
       </form>
     </div>
   );
