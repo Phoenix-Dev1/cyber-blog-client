@@ -64,10 +64,12 @@ const SinglePostPage = () => {
     ALLOWED_TAGS: [
       "p",
       "br",
+      "a",
       "strong",
       "h1",
       "h2",
       "h3",
+      "span",
       "ul",
       "ol",
       "li",
@@ -78,7 +80,18 @@ const SinglePostPage = () => {
       "img",
       "iframe",
     ],
-    ALLOWED_ATTR: ["class", "id", "style", "src", "alt"],
+    ALLOWED_ATTR: [
+      "class",
+      "id",
+      "style",
+      "src",
+      "alt",
+      "href",
+      "rel",
+      "target",
+      "data-list",
+      "contenteditable",
+    ],
   });
 
   // Filter by category change
@@ -129,9 +142,13 @@ const SinglePostPage = () => {
       {/* Content */}
       <div className="flex flex-col md:flex-row gap-12">
         {/* Text */}
-        <div className="lg:text-lg flex flex-col gap-6 text-justify">
-          <div dangerouslySetInnerHTML={{ __html: sanitizedContent }}></div>
+        <div className="text-sm md:text-base lg:text-lg flex flex-col gap-6 text-justify">
+          <div
+            className="prose max-w-full"
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+          ></div>
         </div>
+
         {/* Menu */}
         <div className="px-4 h-max sticky top-8">
           <h1 className="mb-4 text-sm font-medium">Author</h1>
