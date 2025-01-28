@@ -81,9 +81,6 @@ const SinglePostPage = () => {
     ALLOWED_ATTR: ["class", "id", "style", "src", "alt"],
   });
 
-  console.log("decodedContent:" + decodedContent);
-  console.log("sanitizedContent:" + sanitizedContent);
-
   // Filter by category change
   const handleCategoryChange = (category) => {
     // Update the path to "posts" with the selected category
