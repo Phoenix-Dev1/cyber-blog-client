@@ -48,7 +48,7 @@ const PostList = () => {
       scrollThreshold={0.8}
       loader={<h4>Loading more posts...</h4>}
       endMessage={
-        <p className="justify-center text-center hidden lg:block">
+        <p className="justify-center text-center hidden lg:block gap-2">
           <b>Yay! You have seen it all</b>
         </p>
       }

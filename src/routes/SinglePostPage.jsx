@@ -105,7 +105,7 @@ const SinglePostPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col">
       {/* Details */}
       <div className="flex gap-8">
         <div className="lg:w-3/5 flex flex-col gap-8">
@@ -132,28 +132,27 @@ const SinglePostPage = () => {
           <div className="hidden lg:block w-2/5">
             <Image
               src={data?.img}
-              width="400"
-              height="600"
+              width="600"
+              height="400"
               className="rounded-2xl"
             />
           </div>
         )}
       </div>
-      {/* Content */}
-      <div className="flex flex-col md:flex-row gap-12">
-        {/* Text */}
-        <div className="text-sm md:text-base lg:text-lg flex flex-col gap-6 text-justify">
+      {/* Main Content */}
+      <div className="flex flex-1">
+        {/* Main Section */}
+        <div className="w-2/3 text-sm md:text-base lg:text-lg flex flex-col gap-6 text-justify">
           <div
             className="prose max-w-full"
             dangerouslySetInnerHTML={{ __html: sanitizedContent }}
           ></div>
         </div>
-
-        {/* Menu */}
-        <div className="px-4 h-max sticky top-8">
+        {/* Sidebar */}
+        <div className=" w-1/3 px-4 h-max sticky top-8 ml-8 mt-8 hidden lg:block md:block flex-col items-center text-center">
           <h1 className="mb-4 text-sm font-medium">Author</h1>
           <div className="flex  flex-col gap-4">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center gap-4">
               <Image
                 src={data?.user?.img || "default-avatar.png"}
                 className="w-12 h-12 rounded-full object-cover"
@@ -168,7 +167,7 @@ const SinglePostPage = () => {
               </Link>
             </div>
             <p className="text-sm text-gray-500">Cybersecurity enthusiast</p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center text-center justify-center">
               <a href="https://www.facebook.com" target="_blank">
                 <Image src="facebook.svg" />
               </a>
@@ -177,9 +176,11 @@ const SinglePostPage = () => {
               </a>
             </div>
           </div>
-          <PostMenuActions post={data} />
+          <div className="flex flex-col items-center">
+            <PostMenuActions post={data} />
+          </div>
           <h1 className="mt-8 mb-4 text-sm font-medium">Categories</h1>
-          <div className="flex flex-col gap-2 text-sm">
+          <div className="flex flex-col gap-2 justify-center text-sm">
             <span
               className="underline cursor-pointer"
               onClick={() => handleCategoryChange("general")}
@@ -221,7 +222,9 @@ const SinglePostPage = () => {
           <Search />
         </div>
       </div>
-      <Comments postId={data._id} />
+      <div className="m-2">
+        <Comments postId={data._id} />
+      </div>
     </div>
   );
 };
