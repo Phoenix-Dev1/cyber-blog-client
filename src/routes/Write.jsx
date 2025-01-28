@@ -150,13 +150,17 @@ const Write = () => {
               📹
             </Upload>
           </div>
-          <ReactQuill
-            theme="snow"
+          <div
             className="flex-1 rounded-xl bg-white shadow-md w-auto"
-            value={value}
-            onChange={setValue}
-            readOnly={progress > 0 && progress < 100}
-          />
+            onClick={(e) => e.stopPropagation()} // Prevents button interaction affecting the editor
+          >
+            <ReactQuill
+              theme="snow"
+              value={value}
+              onChange={setValue}
+              readOnly={progress > 0 && progress < 100}
+            />
+          </div>
         </div>
         <div className="flex justify-center items-center">
           <button

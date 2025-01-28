@@ -32,9 +32,17 @@ const Homepage = () => {
     <div className="mt-4 flex flex-col gap-4">
       {/*BREADCRUMB*/}
       <div className="flex gap-4">
-        <Link to="/">Home</Link>
-        <span>•</span>
-        <span className="text-royalblue font-medium">Blogs and Articles</span>
+        <div>
+          <Link to="/">Home</Link>
+          <span className="mr-4 ml-4">•</span>
+          <span className="font-medium">Blogs and Articles</span>
+        </div>
+        <div className="lg:hidden md:hidden">
+          <span className="mr-4">•</span>
+          <Link to="/write" className="text-royalblue font-medium">
+            New Post
+          </Link>
+        </div>
       </div>
       {/*INRODUCTION*/}
       <div className="flex items-center justify-between">
