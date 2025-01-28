@@ -1,10 +1,33 @@
 import { Link } from "react-router-dom";
 import MainCategories from "../components/MainCategories";
+import { useQuery } from "@tanstack/react-query";
 import FeaturedPosts from "../components/FeaturedPosts";
 import PostList from "../components/PostList";
 import AddPostButton from "../components/AddPostButton";
+import LoadingPage from "../components/LoadingPage";
+import axios from "axios";
+
+const fetchPost = async () => {
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_URL}/posts?featured=true&limit=4&sort=newest`
+  );
+  return res.data;
+};
 
 const Homepage = () => {
+  const { isPending, error, data } = useQuery({
+    queryKey: ["featuredPosts"],
+    queryFn: () => fetchPost(),
+  });
+
+  if (isPending) return <LoadingPage></LoadingPage>;
+  if (error) return <h4>{error.message}</h4>;
+
+  const posts = data.posts;
+  if (!posts || posts.length === 0) {
+    return;
+  }
+
   return (
     <div className="mt-4 flex flex-col gap-4">
       {/*BREADCRUMB*/}

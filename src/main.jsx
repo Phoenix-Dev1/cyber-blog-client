@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "./context/AuthContext.jsx"; // Add AuthProvider
 import PrivateRoute from "./routes/PrivateRoute.jsx"; // Add PrivateRoute
 import AboutPage from "./routes/AboutPage.jsx";
+import { LoadingProvider } from "./context/LoadingContext.jsx";
 
 const queryClient = new QueryClient();
 
@@ -61,10 +62,12 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <ToastContainer position="bottom-right" />
-      </QueryClientProvider>
+      <LoadingProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+          <ToastContainer position="bottom-right" />
+        </QueryClientProvider>
+      </LoadingProvider>
     </AuthProvider>
   </StrictMode>
 );
