@@ -19,12 +19,30 @@ const fetchPost = async (slug) => {
   return res.data;
 };
 
-// Utility to decode HTML entities
 const decodeHtmlEntities = (input) => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(input, "text/html");
-  return doc.documentElement.textContent;
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = input;
+  return textarea.value;
 };
+
+// Add a DOMPurify hook to restrict image and iframe sources
+DOMPurify.addHook("uponSanitizeAttribute", (node, data) => {
+  const trustedDomain = "https://ik.imagekit.io/guol7ryfs";
+
+  // Restrict <img> tags to the trusted domain
+  if (node.tagName === "IMG" && data.attrName === "src") {
+    if (!data.attrValue.startsWith(trustedDomain)) {
+      data.keepAttr = false;
+    }
+  }
+
+  // Restrict <iframe> tags to the trusted domain
+  if (node.tagName === "IFRAME" && data.attrName === "src") {
+    if (!data.attrValue.startsWith(trustedDomain)) {
+      data.keepAttr = false;
+    }
+  }
+});
 
 const SinglePostPage = () => {
   const { slug } = useParams();
@@ -57,9 +75,14 @@ const SinglePostPage = () => {
       "u",
       "b",
       "i",
+      "img",
+      "iframe",
     ],
-    ALLOWED_ATTR: ["class", "id", "style"],
+    ALLOWED_ATTR: ["class", "id", "style", "src", "alt"],
   });
+
+  console.log("decodedContent:" + decodedContent);
+  console.log("sanitizedContent:" + sanitizedContent);
 
   // Filter by category change
   const handleCategoryChange = (category) => {
