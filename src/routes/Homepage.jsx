@@ -61,7 +61,7 @@ const Homepage = () => {
           <div className="w-1/5 hidden rounded-md shadow-md lg:block relative items-center justify-center">
             <Link to="write" className="hidden md:block relative">
               <AddPostButton />
-              <span className="absolute cursor-pointer text-white hover:text-gray-800 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-2 py-1">
+              <span className="absolute cursor-pointer text-white text-center hover:text-gray-800 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-2 py-1">
                 Create A Post!
               </span>
             </Link>
