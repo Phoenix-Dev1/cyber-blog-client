@@ -129,7 +129,7 @@ const SinglePostPage = () => {
           <p className="text-gray-500 font-md">{data.desc}</p>
         </div>
         {data.img && (
-          <div className="hidden lg:block w-2/5">
+          <div className="hidden lg:block w-2/5 mb-4">
             <Image
               src={data?.img}
               width="600"

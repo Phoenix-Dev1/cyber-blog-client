@@ -158,7 +158,7 @@ const Write = () => {
             readOnly={progress > 0 && progress < 100}
           />
         </div>
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center mb-6">
           <button
             disabled={mutation.isPending || (progress > 0 && progress < 100)}
             className="bg-royalblue text-white font-medium rounded-xl p-4 w-36 disabled:bg-blue-400 disabled:cursor-not-allowed"

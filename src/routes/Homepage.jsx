@@ -3,7 +3,7 @@ import MainCategories from "../components/MainCategories";
 import { useQuery } from "@tanstack/react-query";
 import FeaturedPosts from "../components/FeaturedPosts";
 import PostList from "../components/PostList";
-import AddPostButton from "../components/AddPostButton";
+import AddPostButton from "../components/AddPostButton/AddPostButton";
 import LoadingPage from "../components/LoadingPage";
 import axios from "axios";
 
@@ -15,12 +15,12 @@ const fetchPost = async () => {
 };
 
 const Homepage = () => {
-  const { isPending, error, data } = useQuery({
+  const { isPending, isLoading, error, data } = useQuery({
     queryKey: ["featuredPosts"],
     queryFn: () => fetchPost(),
   });
 
-  if (isPending) return <LoadingPage></LoadingPage>;
+  if (isPending || isLoading) return <LoadingPage></LoadingPage>;
   if (error) return <h4>{error.message}</h4>;
 
   const posts = data.posts;
@@ -37,7 +37,7 @@ const Homepage = () => {
           <span className="mr-4 ml-4">•</span>
           <span className="font-medium">Blogs and Articles</span>
         </div>
-        <div className="lg:hidden md:hidden">
+        <div className="lg:hidden">
           <span className="mr-4">•</span>
           <Link to="/write" className="text-royalblue font-medium">
             New Post
@@ -45,21 +45,28 @@ const Homepage = () => {
         </div>
       </div>
       {/*INRODUCTION*/}
-      <div className="flex items-center justify-between">
-        {/*Titles*/}
-        <div className="">
-          <h1 className="text-gray-800 tex-2xl md:text-5xl lg:text-6xl font-bold">
-            Empowering Minds with Insights on Cyber and Tech.
-          </h1>
-          <p className="mt-8 text-md md:text-xl">
-            Your Daily Dose of Cybersecurity Insights and Technological
-            Breakthroughs
-          </p>
+      <div className="flex flex-1">
+        <div className="flex items-center justify-between">
+          {/*Titles*/}
+          <div className="w-4/5 ">
+            <h1 className="text-gray-800 tex-2xl md:text-5xl lg:text-6xl font-bold">
+              Empowering Minds with Insights on Cyber and Tech.
+            </h1>
+            <p className="mt-8 text-md md:text-xl">
+              Your Daily Dose of Cybersecurity Insights and Technological
+              Breakthroughs
+            </p>
+          </div>
+          {/*Animated Button*/}
+          <div className="w-1/5 hidden rounded-md shadow-md lg:block relative items-center justify-center">
+            <Link to="write" className="hidden md:block relative">
+              <AddPostButton />
+              <span className="absolute cursor-pointer text-white hover:text-gray-800 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-2 py-1">
+                Create A Post!
+              </span>
+            </Link>
+          </div>
         </div>
-        {/*Animated Button*/}
-        <Link to="write" className="hidden md:block relative">
-          <AddPostButton />
-        </Link>
       </div>
       {/*CATEGORIES*/}
       <MainCategories />
