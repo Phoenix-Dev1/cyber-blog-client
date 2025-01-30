@@ -138,30 +138,31 @@ const RegisterPage = () => {
           <button
             type="button"
             onClick={() => handleOAuth("google")}
-            className="py-2 px-4 max-w-md flex justify-center items-center bg-red-600 hover:bg-red-700 focus:ring-red-500 focus:ring-offset-red-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
+            className="py-2 px-4 max-w-md gap-2 flex justify-center items-center bg-red-600 hover:bg-red-700 focus:ring-red-500 focus:ring-offset-red-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
           >
             <svg
+              width="18"
+              height="18"
+              viewBox="-3 0 262 262"
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 48 48"
-              className="mr-2 w-5 h-5"
+              preserveAspectRatio="xMidYMid"
             >
               <path
-                fill="#EA4335"
-                d="M24 9.5c3.14 0 5.93 1.19 8.11 3.11l6.07-6.07C34.91 3.28 29.81 1 24 1 14.78 1 7.11 6.75 3.8 14.16l7.07 5.5C12.57 13.03 17.89 9.5 24 9.5z"
+                d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                fill="#4285F4"
               />
               <path
+                d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
                 fill="#34A853"
-                d="M46.9 24.58c0-1.23-.1-2.44-.28-3.61H24v7.1h13.08c-.58 3.07-2.31 5.69-4.88 7.46l7.07 5.5c4.1-3.77 6.63-9.34 6.63-16.45z"
               />
               <path
-                fill="#4A90E2"
-                d="M9.2 28.84c-.68-1.98-1.08-4.11-1.08-6.34 0-2.23.4-4.36 1.08-6.34L2.12 10.5C.77 13.18 0 16.03 0 19s.77 5.82 2.12 8.5l7.08-5.5z"
-              />
-              <path
+                d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
                 fill="#FBBC05"
-                d="M24 46c5.81 0 10.71-1.92 14.28-5.22l-7.07-5.5C28.66 37.8 26.39 38.5 24 38.5c-6.11 0-11.43-3.53-14.13-8.66l-7.07 5.5C7.11 41.25 14.78 46 24 46z"
               />
-              <path fill="none" d="M0 0h48v48H0z" />
+              <path
+                d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                fill="#EB4335"
+              />
             </svg>
             Google
           </button>
