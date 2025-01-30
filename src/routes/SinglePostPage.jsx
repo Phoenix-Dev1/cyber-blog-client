@@ -144,7 +144,7 @@ const SinglePostPage = () => {
         {/* Main Section */}
         <div className="w-full m-2 text-sm md:text-base lg:text-lg flex flex-col gap-6 text-justify">
           <div
-            className="prose"
+            className="prose max-w-full"
             dangerouslySetInnerHTML={{ __html: sanitizedContent }}
           ></div>
         </div>
