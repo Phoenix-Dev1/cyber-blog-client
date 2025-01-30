@@ -16,6 +16,7 @@ import { AuthProvider } from "./context/AuthContext.jsx"; // Add AuthProvider
 import PrivateRoute from "./routes/PrivateRoute.jsx"; // Add PrivateRoute
 import AboutPage from "./routes/AboutPage.jsx";
 import { LoadingProvider } from "./context/LoadingContext.jsx";
+import EditPage from "./routes/EditPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,14 @@ const router = createBrowserRouter([
             <Write />
           </PrivateRoute>
         ), // Protect this route
+      },
+      {
+        path: "/edit/:slug",
+        element: (
+          <PrivateRoute>
+            element: <EditPage />,
+          </PrivateRoute>
+        ),
       },
       {
         path: "/login",

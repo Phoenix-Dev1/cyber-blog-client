@@ -217,7 +217,7 @@ const PostMenuActions = ({ post }) => {
       {user && (post.user.username === user.username || isAdmin) && (
         <div
           className="flex items-center gap-2 py-2 text-sm cursor-pointer"
-          onClick={() => navigate(`/edit/${post._id}`)} // Redirect to the edit page
+          onClick={() => navigate(`/edit/${post.slug}`)} // Redirect to the edit page
         >
           <svg
             width="20px"
