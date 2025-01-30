@@ -88,7 +88,7 @@ function EditPage() {
     },
     onSuccess: (res) => {
       toast.success("Post Updated");
-      navigate(`/${res.data.slug}`);
+      navigate("/");
       window.location.reload(); // Forces a full reload
     },
     onError: (error) => {

@@ -52,7 +52,7 @@ const router = createBrowserRouter([
         path: "/edit/:slug",
         element: (
           <PrivateRoute>
-            element: <EditPage />,
+            <EditPage />,
           </PrivateRoute>
         ),
       },
