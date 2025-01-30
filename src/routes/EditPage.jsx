@@ -101,12 +101,16 @@ function EditPage() {
     const formData = new FormData(e.target);
 
     const newData = {
-      img: cover?.filePath || "",
       title: formData.get("title"),
       category: formData.get("category"),
       desc: formData.get("desc"),
       content: value,
     };
+
+    // Only add `img` if a new cover image was uploaded
+    if (cover) {
+      newData.img = cover?.filePath || "";
+    }
 
     mutation.mutate(newData);
   };
