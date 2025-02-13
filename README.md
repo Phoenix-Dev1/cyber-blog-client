@@ -1,4 +1,4 @@
-# Screenshot
+# Intro
 
 Cyber Sphere is a cutting-edge tech blog platform that enables users to explore, create, and engage with computer-related content through a seamless and interactive experience.
 
