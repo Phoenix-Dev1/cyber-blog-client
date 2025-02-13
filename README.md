@@ -2,9 +2,9 @@
 
 Cyber Sphere is a cutting-edge tech blog platform that enables users to explore, create, and engage with computer-related content through a seamless and interactive experience.
 
-Project Live at: https://live-messenger.vercel.app/](https://cyber-blog-flame.vercel.app/
+Project Live at: https://cyber-blog-flame.vercel.app/
 
-![cyber-sphere](assets/blog-banner.png)
+![cyber-sphere](https://github.com/Phoenix-Dev1/cyber-blog-client/blob/main/public/assets/blog-banner.png)
 
 ---
 
@@ -33,7 +33,7 @@ Project Live at: https://live-messenger.vercel.app/](https://cyber-blog-flame.ve
 1. Clone this repository
 
 ```bash
-git clone https://github.com/Phoenix-Dev1/cyber-sphere.git && cd cyber-sphere
+git clone https://github.com/Phoenix-Dev1/cyber-blog-client.git && cd cyber-sphere
 ```
 
 2. Install project dependencies
