@@ -42,20 +42,19 @@ git clone https://github.com/Phoenix-Dev1/cyber-blog-client.git && cd cyber-sphe
 npm install
 ```
 
+## Setup
+
 3. Set up environment variables (Required)
    -- Create a .env file in the root directory.
    -- Add the necessary API keys and configuration.
 
-## ImageKit
+- VITE_IMAGEKIT_URL_ENDPOINT =
+- VITE_IMAGEKIT_PUBLIC_KEY =
 
-VITE_IMAGEKIT_URL_ENDPOINT =
-VITE_IMAGEKIT_PUBLIC_KEY =
+- VITE_API_URL =
 
-## Axios URL
-
-VITE_API_URL =
-
-3. Run the project - **Keys Needed**
+## Start the project
+4. Run the project - **Keys Needed**
 
 ```bash
 npm run dev
