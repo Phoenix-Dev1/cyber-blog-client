@@ -25,90 +25,50 @@ const SideMenu = () => {
   };
 
   return (
-    <div className="px-4 h-max sticky top-8">
-      <h1 className="mb-4 text-sm font-medium text-center">Search</h1>
-      <Search />
-      <h1 className="mt-8 mb-4 text-sm font-medium">Filter</h1>
-      <div className="flex flex-col gap-2 text-sm">
-        <label htmlFor="" className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="sort"
-            onChange={handleFilterChange}
-            value="newest"
-            className="appearance-none w-4 h-4 border-[1.5px] border-blue-800 cursor-pointer rounded-sm bg-white checked:bg-royalblue"
-          />
-          Newest
-        </label>
-        <label htmlFor="" className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="sort"
-            onChange={handleFilterChange}
-            value="popular"
-            className="appearance-none w-4 h-4 border-[1.5px] border-blue-800 cursor-pointer rounded-sm bg-white checked:bg-royalblue"
-          />
-          Most Popular
-        </label>
-        <label htmlFor="" className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="sort"
-            onChange={handleFilterChange}
-            value="trending"
-            className="appearance-none w-4 h-4 border-[1.5px] border-blue-800 cursor-pointer rounded-sm bg-white checked:bg-royalblue"
-          />
-          Trending
-        </label>
-        <label htmlFor="" className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="sort"
-            onChange={handleFilterChange}
-            value="oldest"
-            className="appearance-none w-4 h-4 border-[1.5px] border-blue-800 cursor-pointer rounded-sm bg-white checked:bg-royalblue"
-          />
-          Oldest
-        </label>
+    <div className="space-y-10">
+      <div>
+        <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-cyber-muted">Search</h2>
+        <Search />
       </div>
-      <h1 className="mt-8 mb-4 text-sm font-medium">Categories</h1>
-      <div className="flex flex-col gap-4 text-sm">
-        <span
-          className="underline cursor-pointer"
-          onClick={() => handleCategoryChange("general")}
-        >
-          General
-        </span>
-        <span
-          className="underline cursor-pointer"
-          onClick={() => handleCategoryChange("web-design")}
-        >
-          Web Design
-        </span>
-        <span
-          className="underline cursor-pointer"
-          onClick={() => handleCategoryChange("development")}
-        >
-          Development
-        </span>
-        <span
-          className="underline cursor-pointer"
-          onClick={() => handleCategoryChange("databases")}
-        >
-          Databases
-        </span>
-        <span
-          className="underline cursor-pointer"
-          onClick={() => handleCategoryChange("seo")}
-        >
-          Search Engines
-        </span>
-        <span
-          className="underline cursor-pointer"
-          onClick={() => handleCategoryChange("marketing")}
-        >
-          Marketing
-        </span>
+
+      <div>
+        <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-cyber-muted">Sort By</h2>
+        <div className="flex flex-col gap-4 text-sm">
+          {["newest", "popular", "trending", "oldest"].map((sortOption) => (
+            <label key={sortOption} className="flex items-center gap-3 cursor-pointer group">
+              <input
+                type="radio"
+                name="sort"
+                onChange={handleFilterChange}
+                value={sortOption}
+                checked={searchParams.get("sort") === sortOption || (sortOption === "newest" && !searchParams.get("sort"))}
+                className="appearance-none w-5 h-5 border border-cyber-cyan/30 cursor-pointer rounded-full bg-cyber-bg/50 checked:bg-cyber-cyan checked:border-transparent shadow-glow-cyan-sm transition-all group-hover:border-cyber-cyan/60"
+              />
+              <span className="text-cyber-muted group-hover:text-white transition-colors capitalize">
+                {sortOption.replace("-", " ")}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-cyber-muted">Categories</h2>
+        <div className="flex flex-col gap-3 text-sm">
+          {["all", "general", "web-design", "development", "databases", "seo", "marketing"].map((cat) => (
+            <span
+              key={cat}
+              className={`cursor-pointer transition-all duration-200 hover:translate-x-1 ${
+                (searchParams.get("cat") === cat || (cat === "all" && !searchParams.get("cat")))
+                  ? "text-cyber-cyan font-bold"
+                  : "text-cyber-muted hover:text-cyber-cyan"
+              }`}
+              onClick={() => handleCategoryChange(cat === "all" ? "" : cat)}
+            >
+              {cat === "all" ? "All Sectors" : cat.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );

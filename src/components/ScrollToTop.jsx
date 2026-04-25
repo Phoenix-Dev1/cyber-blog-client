@@ -29,10 +29,24 @@ const ScrollToTop = () => {
   return (
     showButton && (
       <button
-        className="fixed bottom-5 right-5 hidden lg:block shadow-md w-12 h-12 bg-blue-800 z-10 border-none rounded-full text-white cursor-pointer text-2xl justify-center items-center transition-opacity duration-300 ease-in-out transform hover:bg-royalblue hover:scale-110 "
+        className="fixed bottom-8 right-8 hidden lg:flex items-center justify-center w-12 h-12 bg-cyber-bg/80 backdrop-blur-md border border-cyber-purple/50 rounded-full text-cyber-cyan cursor-pointer transition-all duration-300 z-50 hover:scale-110 hover:border-cyber-cyan shadow-glow-purple-sm hover:shadow-glow-cyan animate-pulse-slow"
         onClick={handleScrollToTop}
+        aria-label="Scroll to top"
       >
-        ↑
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2.5}
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M4.5 15.75l7.5-7.5 7.5 7.5"
+          />
+        </svg>
       </button>
     )
   );

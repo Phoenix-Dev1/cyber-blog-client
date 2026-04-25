@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Comment from "./Comment";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext"; // Use custom AuthContext
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const fetchComments = async (postId) => {
   const res = await axios.get(
@@ -65,20 +65,36 @@ const Comments = ({ postId }) => {
   };
 
   return (
-    <div className="flex flex-col gap-8 lg:w-3/5 mb-12">
-      <h1 className="text-xl text-gray-500 underline">Comments</h1>
+    <div className="flex flex-col gap-10 w-full max-w-4xl mb-20">
+      <div className="flex items-center gap-6">
+        <h1 className="text-2xl font-black text-white tracking-widest uppercase">
+          Digital Discussion <span className="text-cyber-cyan ml-2 text-lg">[{data?.length || 0}]</span>
+        </h1>
+        <div className="h-[1px] flex-1 bg-gradient-to-r from-cyber-cyan/30 to-transparent" />
+      </div>
+
       <form
         onSubmit={handleSubmit}
-        className="flex items-center justify-between gap-8 w-full"
+        className="group relative"
       >
-        <textarea
-          name="desc"
-          placeholder="Write a comment..."
-          className="w-full p-4 rounded-xl"
-        />
-        <button className="bg-blue-800 px-4 py-3 text-white font-medium rounded-xl">
-          Send
-        </button>
+        <div className="absolute -inset-1 bg-gradient-to-r from-cyber-cyan/20 to-cyber-purple/20 rounded-3xl blur opacity-25 group-focus-within:opacity-50 transition duration-500"></div>
+        <div className="relative flex flex-col bg-cyber-card/40 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+          <textarea
+            name="desc"
+            placeholder="Initialize transmission... Start typing to join the discussion."
+            className="w-full p-8 bg-transparent text-gray-100 text-lg leading-relaxed placeholder:text-white/20 focus:outline-none resize-none min-h-[120px]"
+            required
+          />
+          <div className="flex items-center justify-between p-4 bg-white/5 border-t border-white/5">
+            <span className="text-[10px] font-black text-cyber-cyan/50 uppercase tracking-[0.2em] ml-2">Secure Channel Active</span>
+            <button 
+              disabled={mutation.isPending}
+              className="bg-gradient-to-r from-cyber-cyan to-cyber-purple px-10 py-3 text-cyber-bg font-black text-xs uppercase tracking-widest rounded-xl shadow-glow-cyan transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+            >
+              {mutation.isPending ? "Broadcasting..." : "Send Transmission"}
+            </button>
+          </div>
+        </div>
       </form>
       {isLoading ? (
         "Loading..."

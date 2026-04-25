@@ -57,8 +57,13 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const updateUser = () => {
+    const token = localStorage.getItem("authToken");
+    if (token) fetchUser(token);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,0 +1,9 @@
+const Skeleton = ({ className }) => {
+  return (
+    <div
+      className={`animate-pulse bg-white/5 rounded-md ${className}`}
+    />
+  );
+};
+
+export default Skeleton;

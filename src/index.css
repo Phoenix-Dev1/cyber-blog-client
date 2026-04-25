@@ -2,27 +2,161 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #ccccff;
-  width: 100vw;
-  overflow-x: hidden;
-  font-family: "Onest", sans-serif;
-}
+@layer base {
+  html {
+    color-scheme: dark;
+  }
 
-.animatedButton {
-  animation-duration: 10000ms;
-}
-
-.ql-container {
-  border: none !important;
-}
-.ql-toolbar {
-  border: none !important;
-
-  button {
-    width: 26px !important;
+  body {
+    background-color: #0B0F19;
+    color: #e2e8f0;
+    width: 100vw;
+    overflow-x: hidden;
+    font-family: "Onest", sans-serif;
   }
 }
-.ql-editor {
-  border: none !important;
+
+/* Subtle grid texture overlay for the cyber aesthetic */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Tiptap Editor Styling */
+.tiptap {
+  @apply outline-none prose prose-invert max-w-none min-h-[400px] p-6;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #475569;
+  pointer-events: none;
+  height: 0;
+}
+
+.tiptap h1 { @apply text-3xl font-bold mb-6 text-white; }
+.tiptap h2 { @apply text-2xl font-bold mb-4 text-white; }
+.tiptap h3 { @apply text-xl font-bold mb-3 text-white; }
+
+.tiptap ul { @apply list-disc ml-6 mb-4 space-y-2; }
+.tiptap ol { @apply list-decimal ml-6 mb-4 space-y-2; }
+
+.tiptap code {
+  @apply bg-cyber-purple/20 text-cyber-purple px-1.5 py-0.5 rounded-md text-sm font-mono border border-cyber-purple/30;
+}
+
+.tiptap pre {
+  @apply bg-cyber-bg/80 border border-cyber-border rounded-xl p-4 my-6 font-mono text-sm leading-relaxed overflow-x-auto;
+}
+
+.tiptap pre code {
+  @apply bg-transparent p-0 border-none text-gray-300;
+}
+
+.tiptap blockquote {
+  @apply border-l-4 border-cyber-cyan bg-cyber-cyan/5 py-4 px-6 italic rounded-r-xl my-6;
+}
+
+.tiptap img {
+  @apply rounded-2xl border border-white/10 shadow-glow-cyan-sm my-8 max-w-full h-auto transition-transform hover:scale-[1.01];
+}
+
+.tiptap hr {
+  @apply border-white/5 my-8;
+}
+
+.tiptap a {
+  @apply text-cyber-cyan underline hover:text-cyber-purple transition-colors cursor-pointer;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0B0F19;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(176, 38, 255, 0.4);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(176, 38, 255, 0.7);
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.95); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 15s linear infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.shadow-glow-cyan {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+}
+
+.shadow-glow-cyan-sm {
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+}
+
+.shadow-glow-purple {
+  box-shadow: 0 0 15px rgba(176, 38, 255, 0.3);
+}
+
+.shadow-glow-purple-sm {
+  box-shadow: 0 0 8px rgba(176, 38, 255, 0.2);
+}
+
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-150%) skewX(-25deg); }
+  100% { transform: translateX(150%) skewX(-25deg); }
+}
+
+.animate-shimmer-cyber {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer-cyber::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 240, 255, 0.1) 45%,
+    rgba(176, 38, 255, 0.4) 50%,
+    rgba(0, 240, 255, 0.1) 55%,
+    transparent 100%
+  );
+  animation: shimmer-sweep 3s infinite ease-in-out;
+  pointer-events: none;
 }

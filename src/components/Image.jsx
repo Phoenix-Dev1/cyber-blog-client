@@ -1,16 +1,13 @@
-import { IKImage } from "imagekitio-react";
-
 const Image = ({ src, className, width, height, alt }) => {
-  if (!src || src.trim() === "") {
-    // Avoid rendering the element if src is empty or null
+  if (!src || typeof src !== "string" || src.trim() === "") {
     return null;
   }
 
   const isExternalUrl =
-    src?.startsWith("http://") || src?.startsWith("https://");
+    src.startsWith("http://") || src.startsWith("https://");
 
+  // For external URLs, render as-is
   if (isExternalUrl) {
-    // Render a regular <img> tag for external URLs
     return (
       <img
         src={src}
@@ -23,18 +20,29 @@ const Image = ({ src, className, width, height, alt }) => {
     );
   }
 
-  // Render <IKImage> for ImageKit paths
+  // Build ImageKit URL manually to avoid IKImage's empty-src initialization bug
+  const endpoint = (import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT || "").replace(
+    /\/$/,
+    ""
+  );
+  const path = src.startsWith("/") ? src : `/${src}`;
+
+  // Build transformation query string
+  const trParts = [];
+  if (width) trParts.push(`w-${width}`);
+  if (height) trParts.push(`h-${height}`);
+  const trQuery = trParts.length > 0 ? `?tr=${trParts.join(",")}` : "";
+
+  const fullUrl = `${endpoint}${path}${trQuery}`;
+
   return (
-    <IKImage
-      urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT}
-      path={src}
+    <img
+      src={fullUrl}
       className={className}
       loading="lazy"
-      lqip={{ active: true, quality: 20 }}
       width={width}
       height={height}
       alt={alt || "Image"}
-      transformation={[{ width: width, height: height }]}
     />
   );
 };
