@@ -4,8 +4,14 @@ import { useSearchParams } from "react-router-dom";
 import { usePosts } from "../hooks/usePosts";
 import Skeleton from "./Skeleton";
 
-const PostList = () => {
+const PostList = ({ author }) => {
   const [searchParams] = useSearchParams();
+  
+  // If author prop is provided, we use it, otherwise we use searchParams from URL
+  const effectiveParams = author 
+    ? new URLSearchParams({ author, ...Object.fromEntries(searchParams) })
+    : searchParams;
+
   const {
     data,
     error,
@@ -13,7 +19,7 @@ const PostList = () => {
     hasNextPage,
     isFetching,
     status,
-  } = usePosts(searchParams);
+  } = usePosts(effectiveParams);
 
   if (status === "pending") {
     return (

@@ -65,22 +65,36 @@ const Comments = ({ postId }) => {
   };
 
   return (
-    <div className="flex flex-col gap-8 lg:w-3/5 mb-12">
-      <h1 className="text-xl text-white font-bold tracking-tight">
-        Discussion <span className="text-cyber-cyan">[{data?.length || 0}]</span>
-      </h1>
+    <div className="flex flex-col gap-10 w-full max-w-4xl mb-20">
+      <div className="flex items-center gap-6">
+        <h1 className="text-2xl font-black text-white tracking-widest uppercase">
+          Digital Discussion <span className="text-cyber-cyan ml-2 text-lg">[{data?.length || 0}]</span>
+        </h1>
+        <div className="h-[1px] flex-1 bg-gradient-to-r from-cyber-cyan/30 to-transparent" />
+      </div>
+
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col md:flex-row items-end gap-4 w-full bg-cyber-card/30 p-4 rounded-2xl border border-cyber-border backdrop-blur-sm"
+        className="group relative"
       >
-        <textarea
-          name="desc"
-          placeholder="Join the transmission..."
-          className="w-full p-4 bg-cyber-bg/50 border border-cyber-border rounded-xl text-cyber-text placeholder:text-cyber-muted focus:outline-none focus:border-cyber-cyan transition-colors resize-none min-h-[100px]"
-        />
-        <button className="w-full md:w-auto bg-gradient-to-r from-cyber-cyan to-cyber-purple px-8 py-3 text-cyber-bg font-bold rounded-xl shadow-glow-cyan transition-all hover:scale-105 active:scale-95 shrink-0">
-          Send
-        </button>
+        <div className="absolute -inset-1 bg-gradient-to-r from-cyber-cyan/20 to-cyber-purple/20 rounded-3xl blur opacity-25 group-focus-within:opacity-50 transition duration-500"></div>
+        <div className="relative flex flex-col bg-cyber-card/40 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+          <textarea
+            name="desc"
+            placeholder="Initialize transmission... Start typing to join the discussion."
+            className="w-full p-8 bg-transparent text-gray-100 text-lg leading-relaxed placeholder:text-white/20 focus:outline-none resize-none min-h-[120px]"
+            required
+          />
+          <div className="flex items-center justify-between p-4 bg-white/5 border-t border-white/5">
+            <span className="text-[10px] font-black text-cyber-cyan/50 uppercase tracking-[0.2em] ml-2">Secure Channel Active</span>
+            <button 
+              disabled={mutation.isPending}
+              className="bg-gradient-to-r from-cyber-cyan to-cyber-purple px-10 py-3 text-cyber-bg font-black text-xs uppercase tracking-widest rounded-xl shadow-glow-cyan transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+            >
+              {mutation.isPending ? "Broadcasting..." : "Send Transmission"}
+            </button>
+          </div>
+        </div>
       </form>
       {isLoading ? (
         "Loading..."

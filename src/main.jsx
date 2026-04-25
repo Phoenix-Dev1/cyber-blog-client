@@ -17,6 +17,8 @@ import AboutPage from "./routes/AboutPage.jsx";
 import ContactPage from "./routes/ContactPage.jsx";
 import { LoadingProvider } from "./context/LoadingContext.jsx";
 import EditPage from "./routes/EditPage.jsx";
+import ProfilePage from "./routes/ProfilePage.jsx";
+import SettingsPage from "./routes/SettingsPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +59,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <EditPage />,
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/settings",
+        element: (
+          <PrivateRoute>
+            <SettingsPage />
           </PrivateRoute>
         ),
       },

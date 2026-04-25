@@ -14,6 +14,8 @@ import { formatCategory } from "../utils/formatCategory";
 import { format } from "timeago.js";
 import DOMPurify from "dompurify";
 
+import ProfilePage from "./ProfilePage";
+
 const fetchPost = async (slug) => {
   const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${slug}`);
   return res.data;
@@ -42,12 +44,24 @@ DOMPurify.addHook("uponSanitizeAttribute", (node, data) => {
       data.keepAttr = false;
     }
   }
+
+  // Restrict <video> and <source> tags to the trusted domain
+  if ((node.tagName === "VIDEO" || node.tagName === "SOURCE") && data.attrName === "src") {
+    if (!data.attrValue.startsWith(trustedDomain)) {
+      data.keepAttr = false;
+    }
+  }
 });
 
 const SinglePostPage = () => {
   const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  // If the slug starts with @, it's a profile handle
+  if (slug.startsWith("@")) {
+    return <ProfilePage />;
+  }
 
   const { isPending, error, data } = useQuery({
     queryKey: ["post", slug],
@@ -79,6 +93,8 @@ const SinglePostPage = () => {
       "i",
       "img",
       "iframe",
+      "video",
+      "source",
     ],
     ALLOWED_ATTR: [
       "class",
@@ -91,6 +107,8 @@ const SinglePostPage = () => {
       "target",
       "data-list",
       "contenteditable",
+      "controls",
+      "type",
     ],
   });
 

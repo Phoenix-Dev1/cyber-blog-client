@@ -69,7 +69,10 @@ const Upload = ({ children, type, setProgress, setData, className, style }) => {
         style={style}
         onClick={(e) => {
           e.preventDefault(); // Prevent accidental form submission
-          ref.current.click(); // Trigger file input click
+          if (ref.current) {
+            ref.current.value = null; // Clear the input value to allow selecting the same file again
+            ref.current.click(); // Trigger file input click
+          }
         }}
       >
         {children}
