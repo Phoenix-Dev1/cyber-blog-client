@@ -111,7 +111,7 @@ const AboutPage = () => {
         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
         <div className="relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Join Me on This Journey
+            Join Us on This Journey
           </h2>
           <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto">
             Become part of our growing community and stay ahead in the digital

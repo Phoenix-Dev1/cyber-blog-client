@@ -4,7 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import ImageResize from "tiptap-extension-resize-image";
 import LinkExtension from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -179,6 +179,7 @@ const MenuBar = ({ editor }) => {
 const Write = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [title, setTitle] = useState("");
   const [cover, setCover] = useState(null);
@@ -248,6 +249,7 @@ const Write = () => {
       });
     },
     onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
       toast.success("Broadcast successful.");
       navigate(`/${res.data.slug}`);
     },
