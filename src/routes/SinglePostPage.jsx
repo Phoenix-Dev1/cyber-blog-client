@@ -105,125 +105,138 @@ const SinglePostPage = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      {/* Details */}
-      <div className="flex gap-8">
-        <div className="lg:w-3/5 flex flex-col gap-8">
-          <h1 className="text-xl md:text-3xl xl:text-4xl 2xl:text-5xl font-semibold">
+    <div className="flex flex-col gap-12 animate-fade-in">
+      {/* Details Header */}
+      <div className="flex flex-col lg:flex-row gap-10">
+        <div className="lg:w-3/5 flex flex-col gap-6">
+          <h1 className="text-3xl md:text-5xl xl:text-6xl font-bold text-white leading-tight">
             {data.title}
           </h1>
-          <div className=" flex items-center gap-2 text-gray-400 text-sm">
-            <span>Written by</span>
-            <Link className="text-royalblue " to="/test">
-              {data.user?.username}
-            </Link>
-            <span>on </span>
-            <span
-              className="text-royalblue cursor-pointer"
-              onClick={() => categoryClick(data.category)}
-            >
-              {formatCategory(data.category)}
-            </span>
-            <span>{format(data.createdAt)}</span>
+          <div className="flex flex-wrap items-center gap-4 text-cyber-muted text-sm border-l-2 border-cyber-cyan/30 pl-4 py-1">
+            <div className="flex items-center gap-2">
+              <span className="opacity-70">By</span>
+              <Link className="text-cyber-cyan hover:text-white transition-colors font-medium" to="/test">
+                {data.user?.username}
+              </Link>
+            </div>
+            <span className="w-1 h-1 rounded-full bg-cyber-muted/30"></span>
+            <div className="flex items-center gap-2">
+              <span className="opacity-70">in</span>
+              <span
+                className="text-cyber-purple hover:text-white transition-colors cursor-pointer font-medium"
+                onClick={() => categoryClick(data.category)}
+              >
+                {formatCategory(data.category)}
+              </span>
+            </div>
+            <span className="w-1 h-1 rounded-full bg-cyber-muted/30"></span>
+            <span className="opacity-70">{format(data.createdAt)}</span>
           </div>
-          <p className="text-gray-500 font-md">{data.desc}</p>
+          <p className="text-cyber-text/80 text-lg md:text-xl leading-relaxed italic border-l-2 border-cyber-purple/30 pl-4">
+            {data.desc}
+          </p>
         </div>
         {data.img && (
-          <div className="hidden lg:block w-2/5 mb-4">
-            <Image
-              src={data?.img}
-              width="600"
-              height="400"
-              className="rounded-2xl"
-            />
+          <div className="lg:w-2/5 group">
+            <div className="relative rounded-3xl overflow-hidden shadow-glow-purple/20 border border-cyber-border">
+              <Image
+                src={data?.img}
+                width="600"
+                height="400"
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-cyber-bg/60 to-transparent pointer-events-none"></div>
+            </div>
           </div>
         )}
       </div>
-      {/* Main Content */}
-      <div className="flex">
-        {/* Main Section */}
-        <div className="w-full m-2 text-sm md:text-base lg:text-lg flex flex-col gap-6 text-justify">
+
+      {/* Main Content Area */}
+      <div className="flex flex-col lg:flex-row gap-12">
+        {/* Main Post Section */}
+        <div className="lg:w-2/3">
           <div
-            className="prose max-w-full"
+            className="prose prose-invert prose-lg max-w-none 
+              prose-headings:text-white prose-headings:font-bold 
+              prose-p:text-cyber-text prose-p:leading-relaxed
+              prose-strong:text-cyber-cyan prose-a:text-cyber-purple prose-a:no-underline hover:prose-a:underline
+              prose-li:text-cyber-text prose-ul:list-disc prose-ol:list-decimal
+              prose-blockquote:border-cyber-purple prose-blockquote:bg-cyber-surface/30 prose-blockquote:p-6 prose-blockquote:rounded-xl
+              prose-img:rounded-3xl prose-img:border prose-img:border-cyber-border"
             dangerouslySetInnerHTML={{ __html: sanitizedContent }}
           ></div>
+
+          <div className="mt-16 border-t border-cyber-border pt-12">
+            <Comments postId={data._id} />
+          </div>
         </div>
+
         {/* Sidebar */}
-        <div className=" w-1/3 px-4 h-max sticky top-8 ml-8 mt-8 hidden lg:block md:block flex-col items-center text-center">
-          <h1 className="mb-4 text-sm font-medium">Author</h1>
-          <div className="flex  flex-col gap-4">
-            <div className="flex items-center justify-center gap-4">
-              <Image
-                src={data?.user?.img || "default-avatar.png"}
-                className="w-12 h-12 rounded-full object-cover"
-                width="48"
-                height="48"
-              />
-              <Link
-                to={`/posts?author=${data?.user?.username}`}
-                className="text-royalblue"
-              >
-                {data?.user?.username}
-              </Link>
+        <div className="lg:w-1/3 flex flex-col gap-10">
+          {/* Author Card */}
+          <div className="bg-cyber-card border border-cyber-border rounded-3xl p-8 sticky top-24 shadow-xl">
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-cyber-cyan shadow-glow-cyan"></span>
+              About the Author
+            </h2>
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-4">
+                <div className="relative p-1 rounded-full bg-cyber-gradient">
+                  <Image
+                    src={data?.user?.img || "default-avatar.png"}
+                    className="w-16 h-16 rounded-full object-cover bg-cyber-bg p-0.5"
+                    width="64"
+                    height="64"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <Link
+                    to={`/posts?author=${data?.user?.username}`}
+                    className="text-lg font-bold text-white hover:text-cyber-cyan transition-colors"
+                  >
+                    {data?.user?.username}
+                  </Link>
+                  <p className="text-sm text-cyber-muted">Cybersecurity Enthusiast</p>
+                </div>
+              </div>
+              <p className="text-cyber-text/70 text-sm leading-relaxed">
+                Dedicated to uncovering the latest trends in digital security and futuristic technologies.
+              </p>
+              <div className="flex gap-4 pt-2">
+                <a href="https://facebook.com" target="_blank" className="p-2 rounded-xl bg-cyber-surface border border-cyber-border hover:bg-cyber-purple/20 transition-colors">
+                  <Image src="facebook.svg" className="w-5 h-5 opacity-80" />
+                </a>
+                <a href="https://instagram.com" target="_blank" className="p-2 rounded-xl bg-cyber-surface border border-cyber-border hover:bg-cyber-purple/20 transition-colors">
+                  <Image src="instagram.svg" className="w-5 h-5 opacity-80" />
+                </a>
+              </div>
             </div>
-            <p className="text-sm text-gray-500">Cybersecurity enthusiast</p>
-            <div className="flex gap-2 items-center text-center justify-center">
-              <a href="https://www.facebook.com" target="_blank">
-                <Image src="facebook.svg" />
-              </a>
-              <a href="https://www.instagram.com" target="_blank">
-                <Image src="instagram.svg" />
-              </a>
+
+            <div className="mt-10 border-t border-cyber-border pt-8">
+              <PostMenuActions post={data} />
+            </div>
+
+            <div className="mt-10">
+              <h2 className="text-lg font-bold text-white mb-6">Categories</h2>
+              <div className="flex flex-wrap gap-2">
+                {["General", "Web Design", "Development", "Databases", "SEO", "Marketing"].map((cat) => (
+                  <span
+                    key={cat}
+                    className="px-4 py-2 rounded-full bg-cyber-surface border border-cyber-border text-xs text-cyber-text hover:bg-cyber-purple/20 hover:border-cyber-purple/50 cursor-pointer transition-all"
+                    onClick={() => handleCategoryChange(cat.toLowerCase().replace(" ", "-"))}
+                  >
+                    {cat}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-10">
+              <h2 className="text-lg font-bold text-white mb-6">Quick Search</h2>
+              <Search />
             </div>
           </div>
-          <div className="flex flex-col items-center">
-            <PostMenuActions post={data} />
-          </div>
-          <h1 className="mt-8 mb-4 text-sm font-medium">Categories</h1>
-          <div className="flex flex-col gap-2 justify-center text-sm">
-            <span
-              className="underline cursor-pointer"
-              onClick={() => handleCategoryChange("general")}
-            >
-              General
-            </span>
-            <span
-              className="underline cursor-pointer"
-              onClick={() => handleCategoryChange("web-design")}
-            >
-              Web Design
-            </span>
-            <span
-              className="underline cursor-pointer"
-              onClick={() => handleCategoryChange("development")}
-            >
-              Development
-            </span>
-            <span
-              className="underline cursor-pointer"
-              onClick={() => handleCategoryChange("databases")}
-            >
-              Databases
-            </span>
-            <span
-              className="underline cursor-pointer"
-              onClick={() => handleCategoryChange("seo")}
-            >
-              Search Engines
-            </span>
-            <span
-              className="underline cursor-pointer"
-              onClick={() => handleCategoryChange("marketing")}
-            >
-              Marketing
-            </span>
-          </div>
-          <h1 className="mt-8 mb-4 text-sm font-medium">Search</h1>
-          <Search />
         </div>
-      </div>
-      <div className="m-2">
-        <Comments postId={data._id} />
       </div>
     </div>
   );

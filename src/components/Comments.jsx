@@ -66,17 +66,19 @@ const Comments = ({ postId }) => {
 
   return (
     <div className="flex flex-col gap-8 lg:w-3/5 mb-12">
-      <h1 className="text-xl text-gray-500 underline">Comments</h1>
+      <h1 className="text-xl text-white font-bold tracking-tight">
+        Discussion <span className="text-cyber-cyan">[{data?.length || 0}]</span>
+      </h1>
       <form
         onSubmit={handleSubmit}
-        className="flex items-center justify-between gap-8 w-full"
+        className="flex flex-col md:flex-row items-end gap-4 w-full bg-cyber-card/30 p-4 rounded-2xl border border-cyber-border backdrop-blur-sm"
       >
         <textarea
           name="desc"
-          placeholder="Write a comment..."
-          className="w-full p-4 rounded-xl"
+          placeholder="Join the transmission..."
+          className="w-full p-4 bg-cyber-bg/50 border border-cyber-border rounded-xl text-cyber-text placeholder:text-cyber-muted focus:outline-none focus:border-cyber-cyan transition-colors resize-none min-h-[100px]"
         />
-        <button className="bg-blue-800 px-4 py-3 text-white font-medium rounded-xl">
+        <button className="w-full md:w-auto bg-gradient-to-r from-cyber-cyan to-cyber-purple px-8 py-3 text-cyber-bg font-bold rounded-xl shadow-glow-cyan transition-all hover:scale-105 active:scale-95 shrink-0">
           Send
         </button>
       </form>

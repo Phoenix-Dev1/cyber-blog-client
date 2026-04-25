@@ -7,13 +7,15 @@
     "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "node -e \"const fs=require('fs');const p='node_modules/react-quill-new/dist/quill.snow.css.map';if(fs.existsSync(p)){const b=fs.readFileSync(p);if(b[0]===0xEF&&b[1]===0xBB&&b[2]===0xBF){fs.writeFileSync(p,b.slice(3));console.log('Fixed BOM in quill.snow.css.map')}}\""
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/react-query": "^5.64.0 ",
     "@vercel/analytics": "^1.4.1",
     "axios": "^1.7.9",
+    "caniuse-lite": "^1.0.30001790",
     "dompurify": "^3.2.3",
     "imagekitio-react": "^4.2.0",
     "react": "19.0.0-rc-66855b96-20241106",

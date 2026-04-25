@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "./context/AuthContext.jsx"; // Add AuthProvider
 import PrivateRoute from "./routes/PrivateRoute.jsx"; // Add PrivateRoute
 import AboutPage from "./routes/AboutPage.jsx";
+import ContactPage from "./routes/ContactPage.jsx";
 import { LoadingProvider } from "./context/LoadingContext.jsx";
 import EditPage from "./routes/EditPage.jsx";
 
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <AboutPage />,
+      },
+      {
+        path: "/contact",
+        element: <ContactPage />,
       },
       {
         path: "/posts",
