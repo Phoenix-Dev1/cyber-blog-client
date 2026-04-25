@@ -41,12 +41,15 @@ const PostMenuActions = ({ post }) => {
 
   // Delete post mutation
   const deleteMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (password) => {
       const token = localStorage.getItem("authToken");
       return axios.delete(`${import.meta.env.VITE_API_URL}/posts/${post._id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        data: {
+          password
+        }
       });
     },
     onSuccess: () => {
@@ -108,7 +111,48 @@ const PostMenuActions = ({ post }) => {
 
   // Handlers
   const handleDelete = () => {
-    deleteMutation.mutate();
+    toast.custom((t) => (
+      <div className="bg-cyber-bg/95 backdrop-blur-xl border border-cyber-cyan/50 p-5 rounded-2xl shadow-glow-cyan w-[350px]">
+        <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          Delete Post
+        </h2>
+        <p className="text-sm text-cyber-muted mb-4 leading-relaxed">
+          Demo Environment Protection: Please enter the deletion password to proceed.
+        </p>
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          const pwd = e.target.password.value;
+          toast.dismiss(t);
+          if (pwd) deleteMutation.mutate(pwd);
+        }}>
+          <input 
+            name="password" 
+            type="password" 
+            placeholder="Enter password..."
+            className="w-full bg-black/60 border border-cyber-cyan/30 rounded-xl p-3 text-white placeholder:text-white/20 focus:outline-none focus:border-cyber-cyan focus:shadow-[0_0_10px_rgba(0,255,255,0.3)] transition-all mb-4" 
+            autoFocus 
+          />
+          <div className="flex justify-end gap-3">
+            <button 
+              type="button" 
+              onClick={() => toast.dismiss(t)} 
+              className="px-4 py-2 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-colors text-sm font-medium"
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              className="px-4 py-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all font-medium text-sm shadow-[0_0_15px_rgba(239,68,68,0.2)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] border border-red-500/50"
+            >
+              Confirm Delete
+            </button>
+          </div>
+        </form>
+      </div>
+    ), { duration: Infinity });
   };
 
   const handleSave = () => {
