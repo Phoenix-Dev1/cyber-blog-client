@@ -78,7 +78,7 @@ const ContactPage = () => {
                   value={formData.name}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl bg-black/30 border border-cyber-border text-white focus:border-cyber-cyan/50 focus:ring-1 focus:ring-cyber-cyan/30 outline-none transition-all"
-                  placeholder="John Doe"
+                  placeholder="Nova Sterling"
                 />
               </div>
               <div className="space-y-2">
@@ -90,7 +90,7 @@ const ContactPage = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl bg-black/30 border border-cyber-border text-white focus:border-cyber-cyan/50 focus:ring-1 focus:ring-cyber-cyan/30 outline-none transition-all"
-                  placeholder="john@example.com"
+                  placeholder="nova@cybersphere.tech"
                 />
               </div>
             </div>
@@ -104,7 +104,7 @@ const ContactPage = () => {
                 value={formData.subject}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-xl bg-black/30 border border-cyber-border text-white focus:border-cyber-cyan/50 focus:ring-1 focus:ring-cyber-cyan/30 outline-none transition-all"
-                placeholder="How can we help?"
+                placeholder="System upgrade inquiry..."
               />
             </div>
 
@@ -117,7 +117,7 @@ const ContactPage = () => {
                 value={formData.message}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-xl bg-black/30 border border-cyber-border text-white focus:border-cyber-cyan/50 focus:ring-1 focus:ring-cyber-cyan/30 outline-none transition-all resize-none"
-                placeholder="Your message here..."
+                placeholder="Transmit your message..."
               ></textarea>
             </div>
 

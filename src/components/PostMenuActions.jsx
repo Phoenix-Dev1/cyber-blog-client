@@ -103,6 +103,8 @@ const PostMenuActions = ({ post }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["post", post.slug] });
+      queryClient.invalidateQueries({ queryKey: ["featuredPosts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: (error) => {
       toast.error(error.response?.data || "Failed to feature post");
