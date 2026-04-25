@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { IKContext, IKUpload } from "imagekitio-react";
 import { useRef } from "react";
 import PropTypes from "prop-types"; // For prop validation

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({

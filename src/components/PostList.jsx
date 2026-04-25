@@ -49,8 +49,8 @@ const PostList = () => {
           </svg>
         </div>
         <div className="space-y-2">
-          <h3 className="text-2xl font-bold text-white tracking-tight">No Data Found in this Sector</h3>
-          <p className="text-cyber-muted max-w-sm mx-auto leading-relaxed">
+          <h3 className="text-2xl font-black text-white tracking-tight uppercase">No Data Found in this Sector</h3>
+          <p className="text-gray-400 max-w-sm mx-auto leading-relaxed">
             Our scanners couldn't locate any posts matching your criteria. The digital frontier is quiet for now.
           </p>
         </div>
@@ -76,7 +76,7 @@ const PostList = () => {
         allPosts.length > 0 ? (
           <div className="py-16 text-center">
             <div className="inline-block px-6 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md">
-              <p className="text-cyber-muted text-sm font-medium tracking-wide uppercase">You've reached the end of the digital frontier</p>
+              <p className="text-gray-400 text-xs font-black tracking-widest uppercase">End of digital frontier</p>
             </div>
           </div>
         ) : null

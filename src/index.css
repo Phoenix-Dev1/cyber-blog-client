@@ -34,36 +34,52 @@ main {
   z-index: 1;
 }
 
-/* Quill editor — dark surface */
-.ql-container {
-  border: none !important;
-  color: #e2e8f0;
+/* Tiptap Editor Styling */
+.tiptap {
+  @apply outline-none prose prose-invert max-w-none min-h-[400px] p-6;
 }
-.ql-toolbar {
-  border: none !important;
-  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
-  background: rgba(255,255,255,0.03);
-  border-radius: 0.75rem 0.75rem 0 0;
 
-  button {
-    width: 26px !important;
-    color: #94a3b8 !important;
-  }
-  .ql-stroke {
-    stroke: #94a3b8 !important;
-  }
-  .ql-fill {
-    fill: #94a3b8 !important;
-  }
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #475569;
+  pointer-events: none;
+  height: 0;
 }
-.ql-editor {
-  border: none !important;
-  background: transparent;
-  color: #e2e8f0;
+
+.tiptap h1 { @apply text-3xl font-bold mb-6 text-white; }
+.tiptap h2 { @apply text-2xl font-bold mb-4 text-white; }
+.tiptap h3 { @apply text-xl font-bold mb-3 text-white; }
+
+.tiptap ul { @apply list-disc ml-6 mb-4 space-y-2; }
+.tiptap ol { @apply list-decimal ml-6 mb-4 space-y-2; }
+
+.tiptap code {
+  @apply bg-cyber-purple/20 text-cyber-purple px-1.5 py-0.5 rounded-md text-sm font-mono border border-cyber-purple/30;
 }
-.ql-editor.ql-blank::before {
-  color: #475569 !important;
-  font-style: normal !important;
+
+.tiptap pre {
+  @apply bg-cyber-bg/80 border border-cyber-border rounded-xl p-4 my-6 font-mono text-sm leading-relaxed overflow-x-auto;
+}
+
+.tiptap pre code {
+  @apply bg-transparent p-0 border-none text-gray-300;
+}
+
+.tiptap blockquote {
+  @apply border-l-4 border-cyber-cyan bg-cyber-cyan/5 py-4 px-6 italic rounded-r-xl my-6;
+}
+
+.tiptap img {
+  @apply rounded-2xl border border-white/10 shadow-glow-cyan-sm my-8 max-w-full h-auto transition-transform hover:scale-[1.01];
+}
+
+.tiptap hr {
+  @apply border-white/5 my-8;
+}
+
+.tiptap a {
+  @apply text-cyber-cyan underline hover:text-cyber-purple transition-colors cursor-pointer;
 }
 
 /* Scrollbar styling */

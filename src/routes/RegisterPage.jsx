@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({

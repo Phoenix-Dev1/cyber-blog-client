@@ -40,7 +40,7 @@ const PostListItem = ({ post }) => {
           {post.title}
         </Link>
 
-        <div className="flex items-center gap-2 text-cyber-muted text-sm">
+        <div className="flex items-center gap-2 text-gray-400 text-sm">
           <span>By</span>
           <Link
             to={`/posts?author=${post.user?.username}`}
@@ -50,7 +50,7 @@ const PostListItem = ({ post }) => {
           </Link>
         </div>
 
-        <p className="text-cyber-text/80 line-clamp-3 leading-relaxed">
+        <p className="text-gray-200 line-clamp-3 leading-relaxed">
           {post.desc}
         </p>
 

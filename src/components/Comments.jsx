@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Comment from "./Comment";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext"; // Use custom AuthContext
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const fetchComments = async (postId) => {
   const res = await axios.get(

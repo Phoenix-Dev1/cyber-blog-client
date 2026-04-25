@@ -10,8 +10,7 @@ import RegisterPage from "./routes/RegisterPage.jsx";
 import SinglePostPage from "./routes/SinglePostPage.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "sonner";
 import { AuthProvider } from "./context/AuthContext.jsx"; // Add AuthProvider
 import PrivateRoute from "./routes/PrivateRoute.jsx"; // Add PrivateRoute
 import AboutPage from "./routes/AboutPage.jsx";
@@ -79,7 +78,19 @@ createRoot(document.getElementById("root")).render(
       <LoadingProvider>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
-          <ToastContainer position="bottom-right" />
+          <Toaster 
+            position="bottom-right" 
+            theme="dark"
+            toastOptions={{
+              className: "!bg-white/5 !backdrop-blur-md !border !border-white/10 !rounded-2xl !text-gray-100 !p-4 !shadow-2xl",
+              success: {
+                className: "!border-cyber-cyan/50",
+              },
+              error: {
+                className: "!border-red-500/50",
+              },
+            }}
+          />
         </QueryClientProvider>
       </LoadingProvider>
     </AuthProvider>

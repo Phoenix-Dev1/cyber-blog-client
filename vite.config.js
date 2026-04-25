@@ -5,20 +5,12 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   css: {
-    // Prevents Vite from trying to load missing .map files
-    // from third-party packages like react-quill-new
     devSourcemap: false,
   },
   build: {
     rollupOptions: {
       onwarn(warning, warn) {
-        // Suppress broken source-map warnings from react-quill-new
-        if (
-          warning.code === "SOURCEMAP_ERROR" ||
-          (warning.message && warning.message.includes("react-quill-new"))
-        ) {
-          return;
-        }
+        if (warning.code === "SOURCEMAP_ERROR") return;
         warn(warning);
       },
     },

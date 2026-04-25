@@ -3,7 +3,7 @@ import { format } from "timeago.js";
 import { useAuth } from "../context/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const Comment = ({ comment, postId }) => {
   const { user } = useAuth(); // Access user data from AuthContext

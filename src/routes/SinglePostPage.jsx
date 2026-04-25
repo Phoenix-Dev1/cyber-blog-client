@@ -132,7 +132,7 @@ const SinglePostPage = () => {
             <span className="w-1 h-1 rounded-full bg-cyber-muted/30"></span>
             <span className="opacity-70">{format(data.createdAt)}</span>
           </div>
-          <p className="text-cyber-text/80 text-lg md:text-xl leading-relaxed italic border-l-2 border-cyber-purple/30 pl-4">
+          <p className="text-gray-100 text-lg md:text-xl leading-relaxed italic border-l-2 border-cyber-purple/30 pl-4">
             {data.desc}
           </p>
         </div>
@@ -157,12 +157,12 @@ const SinglePostPage = () => {
         <div className="lg:w-2/3">
           <div
             className="prose prose-invert prose-lg max-w-none 
-              prose-headings:text-white prose-headings:font-bold 
-              prose-p:text-cyber-text prose-p:leading-relaxed
+              prose-headings:text-white prose-headings:font-black 
+              prose-p:text-gray-100 prose-p:leading-relaxed
               prose-strong:text-cyber-cyan prose-a:text-cyber-purple prose-a:no-underline hover:prose-a:underline
-              prose-li:text-cyber-text prose-ul:list-disc prose-ol:list-decimal
-              prose-blockquote:border-cyber-purple prose-blockquote:bg-cyber-surface/30 prose-blockquote:p-6 prose-blockquote:rounded-xl
-              prose-img:rounded-3xl prose-img:border prose-img:border-cyber-border"
+              prose-li:text-gray-100 prose-ul:list-disc prose-ol:list-decimal
+              prose-blockquote:border-cyber-purple prose-blockquote:bg-white/5 prose-blockquote:p-8 prose-blockquote:rounded-[2rem] prose-blockquote:text-gray-200 prose-blockquote:italic
+              prose-img:rounded-3xl prose-img:border prose-img:border-white/10 prose-img:shadow-glow-cyan"
             dangerouslySetInnerHTML={{ __html: sanitizedContent }}
           ></div>
 
