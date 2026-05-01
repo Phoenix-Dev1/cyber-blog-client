@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import MainCategories from "../components/MainCategories";
 import FeaturedPosts from "../components/FeaturedPosts";
@@ -9,21 +9,47 @@ import Skeleton from "../components/Skeleton";
 
 const Homepage = () => {
   const { isPending, error, data } = useFeaturedPosts();
+  const loadingToastId = useRef(null);
 
   useEffect(() => {
     let timer;
+
     if (isPending) {
+      // Start a timer to show the toast after 3.5 seconds
       timer = setTimeout(() => {
-        toast.info("Initializing Neural Link...", {
+        loadingToastId.current = toast.info("Initializing Neural Link...", {
           description: "This is a demo environment. The server may take up to 50 seconds to wake up. Hang tight while we decrypt the data!",
-          duration: 12000,
+          duration: Infinity, // Keep it visible until we manually dismiss it
           className: "border-cyber-cyan/50 bg-cyber-bg/80 backdrop-blur-xl",
         });
-      }, 3500); // Show after 3.5 seconds of loading
+      }, 3500);
+    } else {
+      // If we are no longer pending (either success or error)
+      // 1. Clear the timer so the toast doesn't appear if data arrived quickly
+      clearTimeout(timer);
+      
+      // 2. Dismiss the toast if it was already showing
+      if (loadingToastId.current) {
+        toast.dismiss(loadingToastId.current);
+        loadingToastId.current = null;
+      }
+      
+      // 3. Show success feedback if data arrived
+      if (data) {
+        toast.success("Uplink Established", {
+          description: "Data stream synchronized successfully.",
+          duration: 3000,
+        });
+      }
     }
 
-    return () => clearTimeout(timer);
-  }, [isPending]);
+    return () => {
+      clearTimeout(timer);
+      if (loadingToastId.current) {
+        toast.dismiss(loadingToastId.current);
+      }
+    };
+  }, [isPending, data]);
 
   useEffect(() => {
     if (error) {
