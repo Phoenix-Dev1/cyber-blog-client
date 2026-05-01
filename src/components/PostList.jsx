@@ -3,6 +3,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useSearchParams } from "react-router-dom";
 import { usePosts } from "../hooks/usePosts";
 import Skeleton from "./Skeleton";
+import ErrorState from "./ErrorState";
 
 const PostList = ({ author }) => {
   const [searchParams] = useSearchParams();
@@ -19,6 +20,7 @@ const PostList = ({ author }) => {
     hasNextPage,
     isFetching,
     status,
+    refetch,
   } = usePosts(effectiveParams);
 
   if (status === "pending") {
@@ -38,11 +40,15 @@ const PostList = ({ author }) => {
     );
   }
 
-  if (error) return (
-    <div className="p-8 text-center bg-red-500/10 rounded-3xl border border-red-500/20">
-      <p className="text-red-400 font-semibold">Something went wrong while fetching posts.</p>
-    </div>
-  );
+  if (error) {
+    return (
+      <ErrorState 
+        title="Signal Dropped"
+        message={error.message === "Network Error" ? "Data stream interrupted. Our servers are currently unreachable." : "Failed to sync with the digital archive."} 
+        onRetry={() => refetch()} 
+      />
+    );
+  }
 
   const allPosts = data?.pages?.flatMap((page) => page.posts) || [];
 

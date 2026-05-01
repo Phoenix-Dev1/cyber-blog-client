@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import MainCategories from "../components/MainCategories";
 import FeaturedPosts from "../components/FeaturedPosts";
 import PostList from "../components/PostList";
@@ -7,6 +9,30 @@ import Skeleton from "../components/Skeleton";
 
 const Homepage = () => {
   const { isPending, error, data } = useFeaturedPosts();
+
+  useEffect(() => {
+    let timer;
+    if (isPending) {
+      timer = setTimeout(() => {
+        toast.info("Initializing Neural Link...", {
+          description: "This is a demo environment. The server may take up to 50 seconds to wake up. Hang tight while we decrypt the data!",
+          duration: 12000,
+          className: "border-cyber-cyan/50 bg-cyber-bg/80 backdrop-blur-xl",
+        });
+      }, 3500); // Show after 3.5 seconds of loading
+    }
+
+    return () => clearTimeout(timer);
+  }, [isPending]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Uplink Failure Detected", {
+        description: "Our systems are having trouble reaching the mainframe. We are attempting to re-establish the connection.",
+        duration: 8000,
+      });
+    }
+  }, [error]);
 
   return (
     <div className="mt-8 flex flex-col gap-14 mb-24">
