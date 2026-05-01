@@ -4,9 +4,10 @@ import { format } from "timeago.js";
 import { formatCategory } from "../utils/formatCategory";
 import { useFeaturedPosts } from "../hooks/useFeaturedPosts";
 import Skeleton from "./Skeleton";
+import ErrorState from "./ErrorState";
 
 const FeaturedPosts = () => {
-  const { isPending, error, data } = useFeaturedPosts();
+  const { isPending, error, data, refetch } = useFeaturedPosts();
 
   if (isPending) {
     return (
@@ -31,7 +32,14 @@ const FeaturedPosts = () => {
     );
   }
 
-  if (error) return <div className="text-red-400 p-4 rounded-xl bg-red-500/10 border border-red-500/20">Error: {error.message}</div>;
+  if (error) {
+    return (
+      <ErrorState 
+        message={error.message === "Network Error" ? "Our uplink is down. Please check your connection or wait for system recovery." : error.message} 
+        onRetry={() => refetch()} 
+      />
+    );
+  }
 
   const posts = data.posts;
   if (!posts || posts.length === 0) return null;
