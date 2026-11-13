@@ -53,15 +53,17 @@ DOMPurify.addHook("uponSanitizeAttribute", (node, data) => {
   }
 });
 
+// "/:slug" serves both posts and "/@username" profiles. Choose the component before any other hook runs:
+// returning <ProfilePage /> early from the post component changed its hook count when moving between a
+// profile and a post (e.g. clicking a post on your profile), which crashed with React error #310 / #300.
 const SinglePostPage = () => {
   const { slug } = useParams();
+  return slug.startsWith("@") ? <ProfilePage /> : <PostView slug={slug} />;
+};
+
+const PostView = ({ slug }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-
-  // If the slug starts with @, it's a profile handle
-  if (slug.startsWith("@")) {
-    return <ProfilePage />;
-  }
 
   const { isPending, error, data } = useQuery({
     queryKey: ["post", slug],
