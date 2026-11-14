@@ -6,8 +6,11 @@ import PropTypes from "prop-types"; // For prop validation
 // ImageKit Auth
 const authenticator = async () => {
   try {
+    // The API signs uploads only for logged-in users
+    const authToken = localStorage.getItem("authToken");
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/posts/upload-auth`
+      `${import.meta.env.VITE_API_URL}/posts/upload-auth`,
+      { headers: { Authorization: `Bearer ${authToken}` } }
     );
 
     if (!response.ok) {
