@@ -43,7 +43,7 @@ const PostListItem = ({ post }) => {
         <div className="flex items-center gap-2 text-gray-400 text-sm">
           <span>By</span>
           <Link
-            to={`/posts?author=${post.user?.username}`}
+            to={`/posts?author=${encodeURIComponent(post.user?.username ?? "")}`}
             className="text-cyber-cyan font-bold hover:underline"
           >
             {post.user?.username || "Anonymous"}

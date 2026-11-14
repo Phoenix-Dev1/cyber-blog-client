@@ -5,7 +5,7 @@ const CATEGORIES = [
   { to: "/posts?cat=web-design", label: "Web Design" },
   { to: "/posts?cat=development", label: "Development" },
   { to: "/posts?cat=databases", label: "Databases" },
-  { to: "/posts?cat=search-engines", label: "Search Engines" },
+  { to: "/posts?cat=seo", label: "Search Engines" },
   { to: "/posts?cat=marketing", label: "Marketing" },
 ];
 

@@ -1,72 +1,87 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import api, { clearToken, getToken, setSessionExpiredHandler, setToken } from "../api/client";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
+// The logged-in user. `isLoading` is true until the stored token has been checked with /auth/me, so pages
+// that need a login (PrivateRoute) wait instead of sending a logged-in user to /login on a page reload.
 export const AuthProvider = ({ children }) => {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(() => Boolean(getToken()));
 
-  // Fetch user data from the backend using the JWT token
-  const fetchUser = async (token) => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  // Per-user data cached by queries (saved posts) must not leak into the next session
+  const forgetUserData = useCallback(() => {
+    queryClient.removeQueries({ queryKey: ["savedPosts"] });
+  }, [queryClient]);
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch user data");
-      }
-
-      const data = await response.json();
-      setUser(data);
-    } catch (err) {
-      console.error("Failed to fetch user data:", err);
-      logout(); // Clear the token and user data on error
-    }
-  };
-
-  // Handle login with a token
-  const login = (token) => {
-    localStorage.setItem("authToken", token);
-    fetchUser(token);
-  };
-
-  // Handle logout
-  const logout = () => {
-    localStorage.removeItem("authToken");
+  const logout = useCallback(() => {
+    clearToken();
     setUser(null);
-  };
+    setIsLoading(false);
+    forgetUserData();
+  }, [forgetUserData]);
 
-  // Check for token on page load and handle OAuth login
-  useEffect(() => {
-    // Extract token from URL query parameters
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-
-    if (token) {
-      // If token is in the URL, log in and clean the URL
-      login(token);
-      window.history.replaceState({}, document.title, "/"); // Clean the URL
-    } else {
-      // Check localStorage for token if no token in URL
-      const storedToken = localStorage.getItem("authToken");
-      if (storedToken) {
-        fetchUser(storedToken);
-      }
+  // Loads the user for the stored token. Resolves to the user, or null.
+  const refreshUser = useCallback(async () => {
+    if (!getToken()) {
+      setUser(null);
+      setIsLoading(false);
+      return null;
+    }
+    try {
+      const { data } = await api.get("/auth/me", { skipSessionCheck: true });
+      setUser(data);
+      return data;
+    } catch (error) {
+      // An invalid or expired token is dropped. On a network error the token is kept for the next try.
+      if (error.response?.status === 401) clearToken();
+      setUser(null);
+      return null;
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
-  const updateUser = () => {
-    const token = localStorage.getItem("authToken");
-    if (token) fetchUser(token);
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
-      {children}
-    </AuthContext.Provider>
+  // Stores the token and waits for the user, so the caller can navigate once logged in
+  const login = useCallback(
+    async (token) => {
+      setToken(token);
+      setIsLoading(true);
+      forgetUserData();
+      return refreshUser();
+    },
+    [forgetUserData, refreshUser]
   );
+
+  useEffect(() => {
+    refreshUser();
+    setSessionExpiredHandler(() => {
+      logout();
+      toast.error("Your session has expired. Please log in again.", { id: "session-expired" });
+    });
+    return () => setSessionExpiredHandler(() => {});
+  }, [refreshUser, logout]);
+
+  const value = useMemo(
+    () => ({
+      user,
+      isLoading,
+      isAdmin: user?.role === "admin",
+      isDemo: Boolean(user?.isDemo),
+      login,
+      logout,
+      refreshUser,
+      // Older name, kept for existing callers
+      updateUser: refreshUser,
+    }),
+    [user, isLoading, login, logout, refreshUser]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);

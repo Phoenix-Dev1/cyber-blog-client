@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 const Search = () => {
   const location = useLocation();
@@ -6,13 +6,17 @@ const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      const query = e.target.value;
-      if (location.pathname === "/posts") {
-        setSearchParams({ ...Object.fromEntries(searchParams), search: query });
-      } else {
-        navigate(`/posts?search=${query}`);
-      }
+    if (e.key !== "Enter") return;
+
+    const query = e.target.value.trim();
+    if (location.pathname === "/posts") {
+      const params = Object.fromEntries(searchParams);
+      if (query) params.search = query;
+      else delete params.search;
+      setSearchParams(params);
+    } else if (query) {
+      // Encoded, so "&", "#" and "+" in the search text survive
+      navigate({ pathname: "/posts", search: createSearchParams({ search: query }).toString() });
     }
   };
 

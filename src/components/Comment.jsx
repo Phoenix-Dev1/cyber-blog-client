@@ -2,8 +2,8 @@ import Image from "./Image";
 import { format } from "timeago.js";
 import { useAuth } from "../context/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "sonner";
+import api, { showError } from "../api/client";
 
 const Comment = ({ comment, postId }) => {
   const { user } = useAuth(); // Access user data from AuthContext
@@ -14,23 +14,13 @@ const Comment = ({ comment, postId }) => {
 
   // Mutation for deleting a comment
   const mutation = useMutation({
-    mutationFn: async () => {
-      const token = localStorage.getItem("authToken"); // Get the token from local storage
-      return axios.delete(
-        `${import.meta.env.VITE_API_URL}/comments/${comment._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-    },
+    mutationFn: () => api.delete(`/comments/${comment._id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", postId] });
       toast.success("Comment deleted successfully");
     },
     onError: (error) => {
-      toast.error(error.response.data || "Failed to delete comment");
+      showError(error, "Failed to delete comment");
     },
   });
 
