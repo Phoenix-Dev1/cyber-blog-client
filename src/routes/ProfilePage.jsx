@@ -1,32 +1,37 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api, { isNotFound } from "../api/client";
 import PostList from "../components/PostList";
 import Image from "../components/Image";
 import LoadingPage from "../components/LoadingPage";
+import NotFound from "../components/NotFound";
+import ErrorState from "../components/ErrorState";
 
 const fetchUser = async (username) => {
-  const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/${username}`);
-  return res.data;
+  const { data } = await api.get(`/users/${encodeURIComponent(username)}`);
+  return data;
 };
 
 const ProfilePage = () => {
   const { username: paramUsername, slug } = useParams();
   const username = paramUsername || slug?.replace("@", "");
 
-  const { data: user, isPending, error } = useQuery({
+  const { data: user, isPending, error, refetch } = useQuery({
     queryKey: ["user", username],
     queryFn: () => fetchUser(username),
   });
 
   if (isPending) return <LoadingPage />;
   
-  if (error) return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
-      <div className="text-red-500 font-black text-4xl uppercase tracking-tighter">Identity Not Found</div>
-      <p className="text-cyber-muted">The requested data node could not be located in the sphere.</p>
-    </div>
-  );
+  if (isNotFound(error)) {
+    return (
+      <NotFound
+        title="Identity Not Found"
+        message="The requested data node could not be located in the sphere."
+      />
+    );
+  }
+  if (error) return <ErrorState onRetry={() => refetch()} />;
 
   return (
     <div className="flex flex-col gap-12 pb-20">

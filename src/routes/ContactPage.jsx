@@ -1,25 +1,8 @@
-import React, { useState } from "react";
-import { toast } from "sonner";
+// Decision Q3: the old form only pretended to send. Visitors now write from their own mail app.
+const CONTACT_EMAIL = "contact@barkaziro.co.il";
+const MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Hello from CyberSphere")}`;
 
 const ContactPage = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Demo only: Show success toast and clear form
-    toast.success("Message sent successfully (Demo Mode)");
-    setFormData({ name: "", email: "", subject: "", message: "" });
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   return (
     <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 relative">
       {/* Background decoration */}
@@ -48,8 +31,9 @@ const ContactPage = () => {
               </span>
               Email Us
             </h3>
-            <p className="text-cyber-muted text-sm break-all">hello@cybersphere.tech</p>
-            <p className="text-cyber-muted text-sm mt-1">support@cybersphere.tech</p>
+            <a href={MAILTO} className="text-cyber-cyan text-sm break-all hover:text-cyber-purple transition-colors">
+              {CONTACT_EMAIL}
+            </a>
           </div>
 
           <div className="p-6 rounded-2xl border border-cyber-border bg-cyber-surface backdrop-blur-md">
@@ -65,69 +49,24 @@ const ContactPage = () => {
           </div>
         </div>
 
-        {/* Contact Form */}
+        {/* Write to us */}
         <div className="md:col-span-2">
-          <form onSubmit={handleSubmit} className="p-8 rounded-3xl border border-cyber-border bg-cyber-surface backdrop-blur-xl shadow-2xl space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-cyber-muted ml-1">Full Name</label>
-                <input
-                  required
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-black/30 border border-cyber-border text-white focus:border-cyber-cyan/50 focus:ring-1 focus:ring-cyber-cyan/30 outline-none transition-all"
-                  placeholder="Nova Sterling"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-cyber-muted ml-1">Email Address</label>
-                <input
-                  required
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-black/30 border border-cyber-border text-white focus:border-cyber-cyan/50 focus:ring-1 focus:ring-cyber-cyan/30 outline-none transition-all"
-                  placeholder="nova@cybersphere.tech"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-cyber-muted ml-1">Subject</label>
-              <input
-                required
-                type="text"
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl bg-black/30 border border-cyber-border text-white focus:border-cyber-cyan/50 focus:ring-1 focus:ring-cyber-cyan/30 outline-none transition-all"
-                placeholder="System upgrade inquiry..."
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-cyber-muted ml-1">Message</label>
-              <textarea
-                required
-                name="message"
-                rows="5"
-                value={formData.message}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl bg-black/30 border border-cyber-border text-white focus:border-cyber-cyan/50 focus:ring-1 focus:ring-cyber-cyan/30 outline-none transition-all resize-none"
-                placeholder="Transmit your message..."
-              ></textarea>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-4 rounded-xl bg-cyber-gradient text-white font-bold shadow-glow-purple hover:shadow-glow-cyan hover:scale-[1.02] active:scale-95 transition-all duration-300"
+          <div className="p-8 md:p-10 rounded-3xl border border-cyber-border bg-cyber-surface backdrop-blur-xl shadow-2xl flex flex-col gap-6">
+            <h2 className="text-2xl font-bold text-white">Send us a message</h2>
+            <p className="text-cyber-muted leading-relaxed">
+              Questions, ideas, or something you’d like us to write about? Email us at{" "}
+              <a href={MAILTO} className="text-cyber-cyan hover:text-cyber-purple transition-colors break-all">
+                {CONTACT_EMAIL}
+              </a>{" "}
+              and we’ll get back to you.
+            </p>
+            <a
+              href={MAILTO}
+              className="self-start px-10 py-4 rounded-xl bg-cyber-gradient text-white font-bold shadow-glow-purple hover:shadow-glow-cyan hover:scale-[1.02] active:scale-95 transition-all duration-300"
             >
-              Send Message
-            </button>
-          </form>
+              Email Us
+            </a>
+          </div>
         </div>
       </div>
     </div>

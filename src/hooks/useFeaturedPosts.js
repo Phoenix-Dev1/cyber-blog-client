@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../api/client";
 
 const fetchFeaturedPosts = async () => {
-  const res = await axios.get(
-    `${import.meta.env.VITE_API_URL}/posts?featured=true&limit=4&sort=newest`
-  );
-  return res.data;
+  const { data } = await api.get("/posts", {
+    params: { featured: true, limit: 4, sort: "newest" },
+  });
+  return data;
 };
 
 export const useFeaturedPosts = () => {

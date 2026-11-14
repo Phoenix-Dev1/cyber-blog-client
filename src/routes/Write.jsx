@@ -5,7 +5,7 @@ import ImageResize from "tiptap-extension-resize-image";
 import LinkExtension from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api, { showError } from "../api/client";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -242,19 +242,14 @@ const Write = () => {
   }, [user, navigate]);
 
   const mutation = useMutation({
-    mutationFn: async (newPost) => {
-      const token = localStorage.getItem("authToken");
-      return axios.post(`${import.meta.env.VITE_API_URL}/posts`, newPost, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-    },
+    mutationFn: (newPost) => api.post("/posts", newPost),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       toast.success("Broadcast successful.");
       navigate(`/${res.data.slug}`);
     },
     onError: (error) => {
-      toast.error(error.response?.data || "Broadcast failed.");
+      showError(error, "Broadcast failed.");
     },
   });
 

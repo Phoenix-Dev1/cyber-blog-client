@@ -1,13 +1,12 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../api/client";
 
 const fetchPosts = async ({ pageParam = 1, searchParams }) => {
   const searchParamsObj = Object.fromEntries([...searchParams]);
-
-  const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts`, {
+  const { data } = await api.get("/posts", {
     params: { page: pageParam, limit: 10, ...searchParamsObj },
   });
-  return res.data;
+  return data;
 };
 
 export const usePosts = (searchParams) => {

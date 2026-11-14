@@ -2,29 +2,19 @@ import { toast } from "sonner";
 import { IKContext, IKUpload } from "imagekitio-react";
 import { useRef } from "react";
 import PropTypes from "prop-types"; // For prop validation
+import api, { errorMessage } from "../api/client";
 
-// ImageKit Auth
+// ImageKit asks the API to sign each upload (logged-in users only)
 const authenticator = async () => {
   try {
-    // The API signs uploads only for logged-in users
-    const authToken = localStorage.getItem("authToken");
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/posts/upload-auth`,
-      { headers: { Authorization: `Bearer ${authToken}` } }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Request failed with status ${response.status}: ${errorText}`
-      );
-    }
-
-    const data = await response.json();
+    const { data } = await api.get("/posts/upload-auth");
     const { signature, expire, token } = data;
     return { signature, expire, token };
   } catch (error) {
-    throw new Error(`Authentication request failed: ${error.message}`);
+    // sessionExpired: the "session expired" message was already shown
+    throw Object.assign(new Error(errorMessage(error, "The upload couldn't be authorized.")), {
+      sessionExpired: error.sessionExpired,
+    });
   }
 };
 
@@ -34,6 +24,7 @@ const Upload = ({ children, type, setProgress, setData, className, style }) => {
   // Handle upload error
   const onError = (err) => {
     console.error(err);
+    if (err?.sessionExpired) return;
     toast.error(
       err.message || "Upload Failed. Please try again or check your connection."
     );

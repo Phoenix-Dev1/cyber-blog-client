@@ -128,7 +128,7 @@ const Navbar = () => {
             {profileModalOpen && (
               <div className="absolute right-0 mt-3 w-48 bg-cyber-card/90 backdrop-blur-md border border-cyber-border rounded-xl shadow-glow-purple-sm z-50 overflow-hidden">
                 <Link
-                  to={`/@${user.username}`}
+                  to={`/@${encodeURIComponent(user.username)}`}
                   className="block px-4 py-3 text-sm text-cyber-muted hover:text-cyber-cyan hover:bg-white/5 transition-colors"
                   onClick={() => setProfileModalOpen(false)}
                 >

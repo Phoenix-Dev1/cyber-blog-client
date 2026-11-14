@@ -1,42 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
 import { toast } from "sonner";
+import api, { errorMessage } from "../api/client";
 
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  // The shared demo login stays pre-filled (decision Q1): its profile is locked server-side
   const [email, setEmail] = useState("visitor@cyber-blog");
   const [password, setPassword] = useState("1q2w3e4r");
   const [loading, setLoading] = useState(false);
+
+  // A cancelled or failed Google/GitHub sign-in comes back as /login?error=oauth
+  useEffect(() => {
+    if (searchParams.get("error") === "oauth") {
+      toast.error("Sign-in with Google/GitHub didn't complete. Please try again.", { id: "oauth-error" });
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      if (response.ok) {
-        const { token } = await response.json();
-        login(token); // Save token and update user state
-        toast.success("Identity verified. Welcome back.");
-        navigate("/"); // Redirect to homepage
-      } else {
-        const error = await response.json();
-        toast.error(error.message || "Authentication failed.");
-      }
-    } catch (err) {
-      toast.error("A network disruption occurred.");
+      const { data } = await api.post("/auth/login", { email, password });
+      const user = await login(data.token);
+      if (!user) throw new Error("profile");
+      toast.success("Identity verified. Welcome back.");
+      // Back to the page that asked for a login (PrivateRoute), else home
+      navigate(location.state?.from || "/", { replace: true });
+    } catch (error) {
+      toast.error(errorMessage(error, "Authentication failed."));
     } finally {
       setLoading(false);
     }

@@ -8,17 +8,26 @@ import Image from "../components/Image";
 import PostMenuActions from "../components/PostMenuActions";
 import Search from "../components/Search";
 import Comments from "../components/Comments";
+import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api, { isNotFound } from "../api/client";
+import NotFound from "../components/NotFound";
+import ErrorState from "../components/ErrorState";
 import { formatCategory } from "../utils/formatCategory";
 import { format } from "timeago.js";
 import DOMPurify from "dompurify";
 
 import ProfilePage from "./ProfilePage";
 
+// A missing post comes back as 200 null (current API) or 404 (from the S-1b follow-up on): both mean null
 const fetchPost = async (slug) => {
-  const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${slug}`);
-  return res.data;
+  try {
+    const { data } = await api.get(`/posts/${encodeURIComponent(slug)}`);
+    return data;
+  } catch (error) {
+    if (isNotFound(error)) return null;
+    throw error;
+  }
 };
 
 const decodeHtmlEntities = (input) => {
@@ -65,14 +74,25 @@ const PostView = ({ slug }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const { isPending, error, data } = useQuery({
+  const { isPending, error, data, refetch } = useQuery({
     queryKey: ["post", slug],
     queryFn: () => fetchPost(slug),
   });
 
+  // Count one visit per opened post (not per refetch)
+  const countedSlug = useRef(null);
+  const postId = data?._id;
+  useEffect(() => {
+    if (!postId || countedSlug.current === slug) return;
+    countedSlug.current = slug;
+    api.post(`/posts/${encodeURIComponent(slug)}/view`).catch(() => {});
+  }, [postId, slug]);
+
   if (isPending) return <h4>Loading...</h4>;
-  if (error) return <h4>{error.message}</h4>;
-  if (!data) return <h4>"Post Not Found"</h4>;
+  if (error) return <ErrorState message="This post couldn't be loaded." onRetry={() => refetch()} />;
+  if (!data) {
+    return <NotFound title="Post Not Found" message="This post doesn't exist or has been deleted." />;
+  }
 
   // Decode and sanitize the HTML content
   const decodedContent = decodeHtmlEntities(data.content);
@@ -211,7 +231,7 @@ const PostView = ({ slug }) => {
                 </div>
                 <div className="flex flex-col">
                   <Link
-                    to={`/posts?author=${data?.user?.username}`}
+                    to={`/posts?author=${encodeURIComponent(data?.user?.username ?? "")}`}
                     className="text-lg font-bold text-white hover:text-cyber-cyan transition-colors"
                   >
                     {data?.user?.username}

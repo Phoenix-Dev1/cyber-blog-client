@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "sonner";
+import api, { showError } from "../api/client";
 import Upload from "../components/Upload";
 import Image from "../components/Image";
 
 const SettingsPage = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, isDemo } = useAuth();
   
   const [formData, setFormData] = useState({
     username: user?.username || "",
@@ -18,18 +18,13 @@ const SettingsPage = () => {
   const [progress, setProgress] = useState(0);
 
   const mutation = useMutation({
-    mutationFn: async (updatedData) => {
-      const token = localStorage.getItem("authToken");
-      return axios.patch(`${import.meta.env.VITE_API_URL}/users/settings`, updatedData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-    },
+    mutationFn: (updatedData) => api.patch("/users/settings", updatedData),
     onSuccess: () => {
       toast.success("Identity updated successfully.");
       updateUser();
     },
     onError: (error) => {
-      toast.error(error.response?.data || "Failed to update signal.");
+      showError(error, "Failed to update signal.");
     },
   });
 
@@ -56,6 +51,13 @@ const SettingsPage = () => {
           </div>
         </div>
 
+        {isDemo && (
+          <div className="p-5 rounded-2xl border border-cyber-cyan/30 bg-cyber-cyan/5 text-sm text-cyber-text leading-relaxed">
+            This is the shared demo account, so its profile is locked. Register your own account to set a
+            username, avatar and bio.
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {/* Avatar Upload Section */}
           <div className="bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-10 flex flex-col md:flex-row items-center gap-10 shadow-2xl">
@@ -71,11 +73,13 @@ const SettingsPage = () => {
             </div>
 
             <div className="flex flex-col gap-4 items-center md:items-start flex-1">
-              <Upload type="image" setProgress={setProgress} setData={handleAvatarUpdate}>
-                <button type="button" className="py-3 px-8 bg-white/5 border border-white/10 rounded-xl text-cyber-cyan font-black text-xs uppercase tracking-widest hover:bg-cyber-cyan/10 hover:border-cyber-cyan/30 transition-all shadow-glow-cyan-sm">
-                  Initialize Avatar Override
-                </button>
-              </Upload>
+              {!isDemo && (
+                <Upload type="image" setProgress={setProgress} setData={handleAvatarUpdate}>
+                  <button type="button" className="py-3 px-8 bg-white/5 border border-white/10 rounded-xl text-cyber-cyan font-black text-xs uppercase tracking-widest hover:bg-cyber-cyan/10 hover:border-cyber-cyan/30 transition-all shadow-glow-cyan-sm">
+                    Initialize Avatar Override
+                  </button>
+                </Upload>
+              )}
               {progress > 0 && progress < 100 && (
                 <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                   <div className="h-full bg-cyber-cyan transition-all duration-300" style={{ width: `${progress}%` }} />
@@ -92,6 +96,9 @@ const SettingsPage = () => {
               <input 
                 type="text" 
                 name="username"
+                minLength={3}
+                maxLength={30}
+                disabled={isDemo}
                 value={formData.username}
                 onChange={handleChange}
                 className="w-full p-4 bg-cyber-bg/50 border border-white/10 rounded-2xl text-white placeholder:text-white/10 focus:outline-none focus:border-cyber-cyan focus:shadow-glow-cyan transition-all"
@@ -103,6 +110,8 @@ const SettingsPage = () => {
               <label className="text-xs font-black uppercase tracking-[0.2em] text-cyber-purple/70 ml-1">Biographical Record</label>
               <textarea 
                 name="bio"
+                maxLength={500}
+                disabled={isDemo}
                 value={formData.bio}
                 onChange={handleChange}
                 rows={4}
@@ -115,7 +124,7 @@ const SettingsPage = () => {
           <div className="flex justify-end">
             <button 
               type="submit"
-              disabled={mutation.isPending}
+              disabled={isDemo || mutation.isPending}
               className="px-12 py-5 bg-gradient-to-r from-cyber-cyan to-cyber-purple text-cyber-bg font-black text-sm uppercase tracking-widest rounded-2xl shadow-glow-cyan hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
             >
               {mutation.isPending ? "Syncing..." : "Commit Changes"}

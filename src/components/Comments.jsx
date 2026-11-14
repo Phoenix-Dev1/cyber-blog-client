@@ -1,20 +1,20 @@
-import axios from "axios";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Comment from "./Comment";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext"; // Use custom AuthContext
 import { toast } from "sonner";
+import api, { showError } from "../api/client";
 
 const fetchComments = async (postId) => {
-  const res = await axios.get(
-    `${import.meta.env.VITE_API_URL}/comments/${postId}`
-  );
-  return res.data;
+  const { data } = await api.get(`/comments/${postId}`);
+  return data;
 };
 
 const Comments = ({ postId }) => {
   const { user } = useAuth(); // Access user from AuthContext
   const navigate = useNavigate();
+  const formRef = useRef(null);
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["comments", postId],
@@ -24,24 +24,14 @@ const Comments = ({ postId }) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (newComment) => {
-      const token = localStorage.getItem("authToken"); // Get token from localStorage
-      return axios.post(
-        `${import.meta.env.VITE_API_URL}/comments/${postId}`,
-        newComment,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-    },
+    mutationFn: (newComment) => api.post(`/comments/${postId}`, newComment),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+      formRef.current?.reset();
       toast.success("Comment added successfully");
     },
     onError: (error) => {
-      toast.error(error.response?.data || "Failed to add comment");
+      showError(error, "Failed to add comment");
     },
   });
 
@@ -50,7 +40,7 @@ const Comments = ({ postId }) => {
 
     // Redirect to login if the user is not logged in
     if (!user) {
-      toast.warn("You need to log in to submit a comment");
+      toast.warning("You need to log in to submit a comment");
       navigate("/login"); // Redirect to the login page
       return;
     }
@@ -74,6 +64,7 @@ const Comments = ({ postId }) => {
       </div>
 
       <form
+        ref={formRef}
         onSubmit={handleSubmit}
         className="group relative"
       >

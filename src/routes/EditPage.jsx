@@ -5,8 +5,9 @@ import ImageResize from "tiptap-extension-resize-image";
 import LinkExtension from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import api, { errorMessage, showError, isNotFound } from "../api/client";
+import NotFound from "../components/NotFound";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -127,9 +128,15 @@ const Video = Node.create({
   },
 });
 
+// A missing post comes back as 200 null (current API) or 404 (from the S-1b follow-up on)
 const fetchPost = async (slug) => {
-  const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${slug}`);
-  return res.data;
+  try {
+    const { data } = await api.get(`/posts/${encodeURIComponent(slug)}`);
+    return data;
+  } catch (error) {
+    if (isNotFound(error)) return null;
+    throw error;
+  }
 };
 
 const MenuBar = ({ editor }) => {
@@ -174,6 +181,7 @@ function EditPage() {
   const { slug } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [img, setImg] = useState("");
   const [cover, setCover] = useState(null);
@@ -241,19 +249,17 @@ function EditPage() {
   }, [user, navigate]);
 
   const mutation = useMutation({
-    mutationFn: async (editedPost) => {
-      const token = localStorage.getItem("authToken");
-      return axios.patch(`${import.meta.env.VITE_API_URL}/posts/edit/${slug}`, editedPost, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-    },
+    mutationFn: (editedPost) => api.patch(`/posts/edit/${encodeURIComponent(slug)}`, editedPost),
     onSuccess: () => {
+      // Refresh the cached post and lists instead of reloading the whole page
+      queryClient.invalidateQueries({ queryKey: ["post", slug] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["featuredPosts"] });
       toast.success("Signal updated.");
-      navigate("/");
-      window.location.reload();
+      navigate(`/${slug}`);
     },
     onError: (error) => {
-      toast.error(error.response?.data || "Update failed.");
+      showError(error, "Update failed.");
     },
   });
 
@@ -279,7 +285,8 @@ function EditPage() {
       <p className="text-cyber-cyan font-mono animate-pulse uppercase tracking-widest">Syncing with Archive...</p>
     </div>
   );
-  if (error) return <div className="text-red-400 p-8 text-center bg-red-500/10 rounded-3xl border border-red-500/20 font-bold uppercase tracking-widest">Access Denied: {error.message}</div>;
+  if (error) return <div className="text-red-400 p-8 text-center bg-red-500/10 rounded-3xl border border-red-500/20 font-bold uppercase tracking-widest">{errorMessage(error, "This post couldn't be loaded.")}</div>;
+  if (!data) return <NotFound title="Post Not Found" message="This post doesn't exist or has been deleted." />;
 
   return (
     <div className="flex flex-col gap-10 pb-20 max-w-6xl mx-auto">

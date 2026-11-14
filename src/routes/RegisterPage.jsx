@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
+import api, { errorMessage } from "../api/client";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -20,26 +21,11 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      if (response.ok) {
-        toast.success("Identity established. Welcome to the sphere.");
-        navigate("/login");
-      } else {
-        const error = await response.json();
-        toast.error(error.message || "Registration sequence failed.");
-      }
-    } catch (err) {
-      toast.error("A network disruption occurred.");
+      await api.post("/auth/register", formData);
+      toast.success("Identity established. Welcome to the sphere.");
+      navigate("/login");
+    } catch (error) {
+      toast.error(errorMessage(error, "Registration sequence failed."));
     } finally {
       setLoading(false);
     }
@@ -67,6 +53,8 @@ const RegisterPage = () => {
               type="text"
               id="username"
               name="username"
+              minLength={3}
+              maxLength={30}
               value={formData.username}
               onChange={handleChange}
               required
@@ -85,6 +73,7 @@ const RegisterPage = () => {
               type="email"
               id="email"
               name="email"
+              maxLength={254}
               value={formData.email}
               onChange={handleChange}
               required
@@ -103,6 +92,8 @@ const RegisterPage = () => {
               type="password"
               id="password"
               name="password"
+              minLength={8}
+              maxLength={72}
               value={formData.password}
               onChange={handleChange}
               required

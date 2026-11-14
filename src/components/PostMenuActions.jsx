@@ -1,113 +1,66 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useAuth } from "../context/AuthContext"; // Use custom AuthContext
+import { useAuth } from "../context/AuthContext";
+import api, { showError } from "../api/client";
 
 const PostMenuActions = ({ post }) => {
-  const { user } = useAuth(); // Access user from AuthContext
+  const { user, isAdmin, isDemo } = useAuth();
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
-  const shouldFetchSavedPosts = !!user;
-
-  // Fetch saved posts
+  // The logged-in user's saved post ids
   const {
     isLoading,
     error,
     data: savedPosts,
   } = useQuery({
     queryKey: ["savedPosts"],
-    queryFn: async () => {
-      const token = localStorage.getItem("authToken");
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/users/saved`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return res.data;
-    },
-    enabled: shouldFetchSavedPosts, // Only fetch if user exists
+    queryFn: async () => (await api.get("/users/saved")).data,
+    enabled: Boolean(user),
   });
-
-  const isAdmin = user?.role === "admin";
 
   // Check if the post is saved
   const isSaved = savedPosts?.some((p) => p === post._id) || false;
 
-  // Delete post mutation
+  // Delete post mutation. Only the shared demo account sends the delete password.
   const deleteMutation = useMutation({
-    mutationFn: async (password) => {
-      const token = localStorage.getItem("authToken");
-      return axios.delete(`${import.meta.env.VITE_API_URL}/posts/${post._id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          password
-        }
-      });
-    },
+    mutationFn: (password) =>
+      api.delete(`/posts/${post._id}`, { data: password ? { password } : {} }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["featuredPosts"] });
+      queryClient.removeQueries({ queryKey: ["post", post.slug] });
       toast.success("Post deleted successfully!");
       navigate("/");
     },
     onError: (error) => {
-      toast.error(error.response?.data || "Failed to delete post");
+      showError(error, "Failed to delete post");
     },
   });
 
   // Save post mutation
   const saveMutation = useMutation({
-    mutationFn: async () => {
-      const token = localStorage.getItem("authToken");
-      return axios.patch(
-        `${import.meta.env.VITE_API_URL}/users/save`,
-        { postId: post._id },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-    },
+    mutationFn: () => api.patch("/users/save", { postId: post._id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["savedPosts"] });
     },
     onError: (error) => {
-      toast.error(error.response?.data || "Failed to save post");
+      showError(error, "Failed to save post");
     },
   });
 
-  // Feature post mutation
+  // Feature post mutation (admins)
   const featureMutation = useMutation({
-    mutationFn: async () => {
-      const token = localStorage.getItem("authToken");
-
-      if (!user) {
-        return <p>Please log in to access actions.</p>;
-      }
-      return axios.patch(
-        `${import.meta.env.VITE_API_URL}/posts/feature`,
-        { postId: post._id },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-    },
+    mutationFn: () => api.patch("/posts/feature", { postId: post._id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["post", post.slug] });
       queryClient.invalidateQueries({ queryKey: ["featuredPosts"] });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: (error) => {
-      toast.error(error.response?.data || "Failed to feature post");
+      showError(error, "Failed to feature post");
     },
   });
 
@@ -122,21 +75,26 @@ const PostMenuActions = ({ post }) => {
           Delete Post
         </h2>
         <p className="text-sm text-cyber-muted mb-4 leading-relaxed">
-          Demo Environment Protection: Please enter the deletion password to proceed.
+          {isDemo
+            ? "Demo Environment Protection: Please enter the deletion password to proceed."
+            : "Delete this post and its comments? This can't be undone."}
         </p>
         <form onSubmit={(e) => {
           e.preventDefault();
-          const pwd = e.target.password.value;
+          const pwd = isDemo ? e.target.password.value : undefined;
+          if (isDemo && !pwd) return;
           toast.dismiss(t);
-          if (pwd) deleteMutation.mutate(pwd);
+          deleteMutation.mutate(pwd);
         }}>
-          <input 
-            name="password" 
-            type="password" 
-            placeholder="Enter password..."
-            className="w-full bg-black/60 border border-cyber-cyan/30 rounded-xl p-3 text-white placeholder:text-white/20 focus:outline-none focus:border-cyber-cyan focus:shadow-[0_0_10px_rgba(0,255,255,0.3)] transition-all mb-4" 
-            autoFocus 
-          />
+          {isDemo && (
+            <input
+              name="password"
+              type="password"
+              placeholder="Enter password..."
+              className="w-full bg-black/60 border border-cyber-cyan/30 rounded-xl p-3 text-white placeholder:text-white/20 focus:outline-none focus:border-cyber-cyan focus:shadow-[0_0_10px_rgba(0,255,255,0.3)] transition-all mb-4"
+              autoFocus
+            />
+          )}
           <div className="flex justify-end gap-3">
             <button 
               type="button" 
